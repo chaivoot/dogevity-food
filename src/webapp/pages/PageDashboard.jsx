@@ -21,28 +21,30 @@ export default function PageDashboard({ dog, weights, health }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Profile summary */}
-      <div style={{ background: 'var(--white)', borderRadius: 16, border: '1px solid var(--border)', padding: 16, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-        <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--teal-xlight)', border: '3px solid var(--teal-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26, flexShrink: 0 }}>🐕</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{dog.name}</div>
-          <div style={{ fontSize: 12, color: 'var(--text-light)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            {dog.breed} · {getAgeString(dog.birthYear, dog.birthMonth)}{dog.neutered ? ' · ✂️ ทำหมัน' : ''}
+      <div className="profile-card">
+        <div className="profile-top">
+          <div className="profile-avatar">🐕</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text)' }}>{dog.name}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-light)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              {dog.breed} · {getAgeString(dog.birthYear, dog.birthMonth)}{dog.neutered ? ' · ✂️ ทำหมัน' : ''}
+            </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <div className="profile-stats">
           {[
             { label: 'น้ำหนัก', val: `${dog.weight} กก.`, color: 'var(--text)' },
             { label: 'BCS', val: `${dog.bcs}/9`, color: bcsColor },
             { label: 'สถานะ', val: getBCSLabel(dog.bcs), color: bcsColor },
           ].map((s, i) => (
-            <div key={i} style={{ textAlign: 'center', padding: '6px 10px', background: 'var(--bg)', borderRadius: 10 }}>
-              <div style={{ fontSize: 10, color: 'var(--text-light)', marginBottom: 3, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{s.label}</div>
-              <div style={{ fontSize: 14, fontWeight: 800, color: s.color }}>{s.val}</div>
+            <div key={i} className="profile-stat-box">
+              <div className="profile-stat-label">{s.label}</div>
+              <div className="profile-stat-val" style={{ color: s.color }}>{s.val}</div>
             </div>
           ))}
         </div>
         {upcoming.length > 0 && (
-          <div style={{ background: 'oklch(94% 0.06 78)', border: '1px solid oklch(80% 0.08 78)', borderRadius: 10, padding: '6px 12px', fontSize: 12, color: 'oklch(50% 0.14 75)', display: 'flex', alignItems: 'center', gap: 5, width: '100%' }}>
+          <div className="profile-alert">
             ⚠️ <span><strong>{upcoming.length} รายการ</strong> ถึงกำหนดเร็วๆ นี้</span>
           </div>
         )}
