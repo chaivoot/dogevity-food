@@ -1,0 +1,105 @@
+export const ingData = {
+  'เนื้อสัตว์': [
+    { name: 'ปลาแพงกาเซีย', amount: '600 ก./สัปดาห์', pct: 28, color: 'oklch(55% 0.16 25)' },
+    { name: 'ปลาซาบะ', amount: '350 ก./สัปดาห์', pct: 16, color: 'oklch(62% 0.14 25)' },
+    { name: 'หมูบด + เนื้อบด', amount: '300 ก./สัปดาห์', pct: 14, color: 'oklch(60% 0.12 15)' },
+    { name: 'หอยแมลงภู่ + ไก่บด', amount: '375 ก./สัปดาห์', pct: 12, color: 'oklch(65% 0.13 30)' },
+  ],
+  'เครื่องใน': [
+    { name: 'ตับไก่', amount: '~128 ก./สัปดาห์', pct: 45, color: 'oklch(50% 0.15 330)' },
+    { name: 'กึ๋นไก่', amount: '~128 ก./สัปดาห์', pct: 30, color: 'oklch(58% 0.13 320)' },
+    { name: 'หัวใจไก่', amount: '~129 ก./สัปดาห์', pct: 25, color: 'oklch(55% 0.14 340)' },
+  ],
+  'คาร์โบ & ผัก': [
+    { name: 'ข้าวไรซ์เบอร์รี', amount: '616 ก./สัปดาห์', pct: 40, color: 'oklch(42% 0.08 240)' },
+    { name: 'ฟักทอง', amount: '370 ก./สัปดาห์', pct: 24, color: 'oklch(68% 0.15 65)' },
+    { name: 'บร็อคโคลี่แช่แข็ง', amount: '320 ก./สัปดาห์', pct: 21, color: 'oklch(58% 0.16 145)' },
+    { name: 'ผักสลัดคอส', amount: '160 ก./สัปดาห์', pct: 11, color: 'oklch(65% 0.14 140)' },
+  ],
+  'อาหารเสริม': [
+    { name: 'ไข่ไก่', amount: '6 ฟอง/สัปดาห์', pct: 30, color: 'oklch(72% 0.14 78)' },
+    { name: 'เปลือกไข่บด', amount: '6-7 ช้อนชา/สัปดาห์', pct: 20, color: 'oklch(78% 0.08 80)' },
+    { name: 'Kelp + Triple Omega', amount: '12 + 3 เม็ด/สัปดาห์', pct: 15, color: 'var(--teal)' },
+    { name: 'เมล็ดฟักทอง + ทานตะวัน', amount: '6 ช้อนโต๊ะ/สัปดาห์', pct: 12, color: 'oklch(62% 0.12 145)' },
+  ],
+};
+
+export const macros = [
+  { name: 'โปรตีน', pct: 42, color: 'oklch(55% 0.16 25)' },
+  { name: 'คาร์โบไฮเดรต', pct: 30, color: 'oklch(58% 0.16 145)' },
+  { name: 'ไขมัน', pct: 18, color: 'oklch(68% 0.14 78)' },
+  { name: 'ใยอาหาร & แร่ธาตุ', pct: 10, color: 'var(--teal)' },
+];
+
+export const testimonials = [
+  {
+    stars: 5,
+    text: 'น้องปุ๊กกินอาหารปรุงสุกมา 3 เดือนแล้ว ขนสวยขึ้นชัดเจน ขี้ดีขึ้น และดูมีพลังงานมากกว่าตอนกินอาหารเม็ดมากเลยค่ะ',
+    name: 'คุณนิ้ง',
+    dog: 'Pomeranian อายุ 4 ปี',
+  },
+  {
+    stars: 5,
+    text: 'ตอนแรกกังวลมากว่าจะทำได้ไหม แต่พี่แบงก์ช่วยคำนวณให้ละเอียดมาก บอกปริมาณชัดเจนทุกอย่าง ทำตามได้สบายมากครับ',
+    name: 'คุณเต้',
+    dog: 'Shiba อายุ 6 ปี',
+  },
+  {
+    stars: 5,
+    text: 'น้องมีปัญหาแพ้อาหารมาตลอด หมอแนะนำให้เปลี่ยนเป็นอาหารปรุงสุก พอมาให้คุณ Chaivoot ช่วยออกแบบ อาการดีขึ้นชัดเจนภายใน 2 สัปดาห์',
+    name: 'คุณแพร',
+    dog: 'Golden Retriever อายุ 3 ปี',
+  },
+];
+
+export const problemCards = [
+  {
+    icon: '🏭',
+    title: 'อาหารสำเร็จรูปไม่โปร่งใส',
+    text: 'ส่วนผสมหลายอย่างซ่อนอยู่ภายใต้คำว่า "by-products" หรือ "meat meal" โดยไม่บอกที่มาที่แท้จริง',
+  },
+  {
+    icon: '📊',
+    title: 'ไม่มีสูตรที่เหมาะกับทุกตัว',
+    text: 'น้องหมาแต่ละตัวมีน้ำหนัก อายุ กิจกรรม และสุขภาพต่างกัน ความต้องการพลังงานจึงไม่เท่ากัน',
+  },
+  {
+    icon: '💡',
+    title: 'อาหารปรุงสุกที่คำนวณถูกต้อง',
+    text: 'ถ้าคำนวณตาม AAFCO พร้อม RER/DER ที่เหมาะสม อาหารปรุงสุกสามารถให้โภชนาการครบถ้วนได้',
+  },
+];
+
+export const solutionCards = [
+  {
+    num: '01',
+    icon: '📋',
+    title: 'เก็บข้อมูลน้องหมา',
+    text: 'น้ำหนัก อายุ สายพันธุ์ ระดับกิจกรรม BCS โรคประจำตัว และอาหารที่แพ้ — ทุกอย่างส่งผลต่อความต้องการพลังงาน',
+  },
+  {
+    num: '02',
+    icon: '🧮',
+    title: 'คำนวณ RER & DER',
+    text: 'Resting Energy Requirement และ Daily Energy Requirement คือฐานของทุกสูตร เพื่อให้ได้ Body Condition Score ที่สมดุล ไม่อ้วน ไม่ผอมเกินไป',
+  },
+  {
+    num: '03',
+    icon: '🍲',
+    title: 'ออกแบบสูตรเฉพาะตัว',
+    text: 'คัดสรรวัตถุดิบตาม AAFCO หลีกเลี่ยงสิ่งที่แพ้ เสริมจุลธาตุให้ครบ ไม่ใช่แค่ไก่กับผักในหม้อ',
+  },
+];
+
+export const credBadges = [
+  {
+    icon: '🎓',
+    title: 'Pet Nutrition Coach Certification',
+    sub: 'NAVC — North American Veterinary Community (สมาคมสัตวแพทย์แห่งอเมริกาเหนือ) · 2026',
+  },
+  {
+    icon: '🏅',
+    title: 'Recallers Alumni Certificate',
+    sub: 'Susan Garrett · IAABC · 25 CEU · Choice-Based Dog Training',
+  },
+];
