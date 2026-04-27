@@ -295,7 +295,7 @@
   .wb-main { height: 100vh; }
   .topbar { padding: 0 16px; height: 54px; }
   .topbar-title { font-size: 16px; }
-  .wb-content { padding: 16px 16px calc(80px + env(safe-area-inset-bottom, 0px)); }
+  .wb-content { padding: 16px 16px calc(120px + env(safe-area-inset-bottom, 0px)); }
   .grid-2, .grid-3, .grid-1-2, .grid-2-1 { grid-template-columns: 1fr !important; }
   .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
   .wcard { padding: 16px; }
