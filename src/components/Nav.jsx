@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
-function scrollTo(id) {
+function scrollTo(id, close) {
+  close();
   const el = document.getElementById(id);
   if (el) {
     const top = el.getBoundingClientRect().top + window.pageYOffset - 76;
@@ -10,6 +11,8 @@ function scrollTo(id) {
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const close = () => setOpen(false);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 40);
@@ -17,21 +20,62 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  const links = [
+    { label: 'ปัญหา', id: 'problem' },
+    { label: 'วิธีการ', id: 'solution' },
+    { label: 'สูตรอาหาร', id: 'recipe' },
+    { label: 'ประสบการณ์', id: 'creds' },
+  ];
+
   return (
-    <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
-      <a className="nav-logo" href="#">
-        <img src="/dogevityfoodlogo-transparent.png" alt="Dogevity Food" />
-      </a>
-      <ul className="nav-links">
-        <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('problem'); }}>ปัญหา</a></li>
-        <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('solution'); }}>วิธีการ</a></li>
-        <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('recipe'); }}>สูตรอาหาร</a></li>
-        <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('creds'); }}>ประสบการณ์</a></li>
-        <li><a href="/login">เข้าสู่ระบบ</a></li>
-      </ul>
-      <a className="nav-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta'); }}>
-        รับสูตรอาหารฟรี
-      </a>
-    </nav>
+    <>
+      <nav className={`nav${scrolled ? ' scrolled' : ''}`}>
+        <a className="nav-logo" href="#" onClick={close}>
+          <img src="/dogevityfoodlogo-transparent.png" alt="Dogevity Food" />
+        </a>
+
+        {/* Desktop links */}
+        <ul className="nav-links">
+          {links.map(l => (
+            <li key={l.id}><a href="#" onClick={e => { e.preventDefault(); scrollTo(l.id, close); }}>{l.label}</a></li>
+          ))}
+          <li><a href="/login">เข้าสู่ระบบ</a></li>
+        </ul>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <a className="nav-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta', close); }}>
+            รับสูตรอาหารฟรี
+          </a>
+          {/* Hamburger button — mobile only */}
+          <button className="nav-hamburger" onClick={() => setOpen(v => !v)} aria-label="เมนู">
+            <span className={`ham-bar${open ? ' open' : ''}`} />
+            <span className={`ham-bar${open ? ' open' : ''}`} />
+            <span className={`ham-bar${open ? ' open' : ''}`} />
+          </button>
+        </div>
+      </nav>
+
+      {/* Mobile overlay */}
+      {open && <div className="nav-overlay" onClick={close} />}
+
+      {/* Mobile menu */}
+      <div className={`nav-mobile-menu${open ? ' open' : ''}`}>
+        {links.map(l => (
+          <a key={l.id} className="nav-mobile-link" href="#"
+            onClick={e => { e.preventDefault(); scrollTo(l.id, close); }}>
+            {l.label}
+          </a>
+        ))}
+        <a className="nav-mobile-link" href="/login" onClick={close}>เข้าสู่ระบบ</a>
+        <a className="nav-mobile-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta', close); }}>
+          รับสูตรอาหารฟรี →
+        </a>
+      </div>
+    </>
   );
 }
