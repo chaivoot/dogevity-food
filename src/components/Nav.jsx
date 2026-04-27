@@ -27,7 +27,7 @@ export default function Nav() {
         <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('solution'); }}>วิธีการ</a></li>
         <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('recipe'); }}>สูตรอาหาร</a></li>
         <li><a href="#" onClick={e => { e.preventDefault(); scrollTo('creds'); }}>ประสบการณ์</a></li>
-        <li><a href="/app">Web App</a></li>
+        <li><a href="/login">เข้าสู่ระบบ</a></li>
       </ul>
       <a className="nav-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta'); }}>
         รับสูตรอาหารฟรี
