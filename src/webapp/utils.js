@@ -33,13 +33,3 @@ export function getBCSColor(bcs) {
   if (bcs <= 6) return 'var(--gold)';
   return 'var(--red)';
 }
-
-import { useState } from 'react';
-
-export function useLocalState(key, init) {
-  const [val, setVal] = useState(() => {
-    try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : init; } catch { return init; }
-  });
-  const set = (v) => { setVal(v); try { localStorage.setItem(key, JSON.stringify(v)); } catch {} };
-  return [val, set];
-}

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser, registerUser, getSession } from './auth';
+import { loginUser, registerUser } from './auth';
+import { supabase } from '../lib/supabase';
 import './webapp.css';
 
 export default function LoginPage() {
@@ -11,25 +12,26 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  if (getSession()) {
-    navigate('/app', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate('/app', { replace: true });
+    });
+  }, [navigate]);
 
   const validatePhone = (p) => /^\d{10}$/.test(p);
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault();
     setError('');
     if (!email.trim()) return setError('กรุณากรอกอีเมล');
     if (!validatePhone(phone)) return setError('เบอร์โทรต้องเป็นตัวเลข 10 หลัก');
     setLoading(true);
-    setTimeout(() => {
-      const result = tab === 'login' ? loginUser(email, phone) : registerUser(email, phone);
-      setLoading(false);
-      if (result.ok) navigate('/app', { replace: true });
-      else setError(result.error);
-    }, 600);
+    const result = tab === 'login'
+      ? await loginUser(email, phone)
+      : await registerUser(email, phone);
+    setLoading(false);
+    if (result.ok) navigate('/app', { replace: true });
+    else setError(result.error);
   };
 
   return (

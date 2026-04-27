@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getSession, clearSession } from './auth';
-import { useLocalState } from './utils';
+import { supabase } from '../lib/supabase';
+import { getUser, clearSession } from './auth';
 import { INIT_DOG, INIT_WEIGHTS, INIT_HEALTH } from './data';
 import PageDashboard from './pages/PageDashboard';
 import PageProfile from './pages/PageProfile';
@@ -29,21 +29,69 @@ const PAGE_TITLES = {
 export default function WebApp() {
   const navigate = useNavigate();
   const [page, setPage] = useState('dashboard');
-  const [dog, setDog] = useLocalState('dogevity_dog', INIT_DOG);
-  const [weights, setWeights] = useLocalState('dogevity_weights', INIT_WEIGHTS);
-  const [health, setHealth] = useLocalState('dogevity_health', INIT_HEALTH);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
+  const [dog, setDogState] = useState(INIT_DOG);
+  const [weights, setWeightsState] = useState(INIT_WEIGHTS);
+  const [health, setHealthState] = useState(INIT_HEALTH);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
   }, []);
 
-  if (!getSession()) {
-    navigate('/login', { replace: true });
-    return null;
-  }
+  useEffect(() => {
+    async function init() {
+      const user = await getUser();
+      if (!user) { navigate('/login', { replace: true }); return; }
+      setUserId(user.id);
 
-  const logout = () => { clearSession(); navigate('/login', { replace: true }); };
+      const { data } = await supabase
+        .from('user_data')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (data) {
+        if (data.dog) setDogState(data.dog);
+        if (data.weights) setWeightsState(data.weights);
+        if (data.health) setHealthState(data.health);
+      } else {
+        await supabase.from('user_data').insert({
+          user_id: user.id,
+          dog: INIT_DOG,
+          weights: INIT_WEIGHTS,
+          health: INIT_HEALTH,
+        });
+      }
+      setLoading(false);
+    }
+    init();
+  }, [navigate]);
+
+  const save = useCallback(async (col, val) => {
+    if (!userId) return;
+    await supabase.from('user_data')
+      .update({ [col]: val, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+  }, [userId]);
+
+  const setDog = (v) => { setDogState(v); save('dog', v); };
+  const setWeights = (v) => { setWeightsState(v); save('weights', v); };
+  const setHealth = (v) => { setHealthState(v); save('health', v); };
+
+  const logout = async () => { await clearSession(); navigate('/login', { replace: true }); };
+
+  if (loading) {
+    return (
+      <div className="login-page">
+        <div className="login-card" style={{ textAlign: 'center', padding: 48 }}>
+          <div style={{ fontSize: 32, marginBottom: 16 }}>🐾</div>
+          <div style={{ color: 'var(--text-light)', fontSize: 14 }}>กำลังโหลดข้อมูล...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="webapp-root">
