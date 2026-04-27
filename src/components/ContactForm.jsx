@@ -19,7 +19,7 @@ export default function ContactForm() {
         จะติดต่อกลับภายใน 24 ชั่วโมง<br />
         เพื่อเริ่มออกแบบสูตรอาหารสำหรับ <strong>{f.dog || 'น้องหมา'}</strong> โดยเฉพาะ
       </div>
-      <a className="webapp-link" href="/webapp" target="_blank">ลองดู Web App →</a>
+      <a className="webapp-link" href="/app">ลองดู Web App →</a>
     </div>
   );
 

@@ -1,3 +1,4 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import FadeInObserver from './components/FadeInObserver';
 import Nav from './components/Nav';
@@ -9,8 +10,10 @@ import Credentials from './components/Credentials';
 import Testimonials from './components/Testimonials';
 import CTASection from './components/CTASection';
 import Footer from './components/Footer';
+import LoginPage from './webapp/LoginPage';
+import WebApp from './webapp/WebApp';
 
-export default function App() {
+function LandingPage() {
   return (
     <>
       <FadeInObserver />
@@ -24,5 +27,17 @@ export default function App() {
       <CTASection />
       <Footer />
     </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/app" element={<WebApp />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
