@@ -42,27 +42,31 @@ export default function WebApp() {
 
   useEffect(() => {
     async function init() {
-      const user = await getUser();
-      if (!user) { navigate('/login', { replace: true }); return; }
-      setUserId(user.id);
+      try {
+        const user = await getUser();
+        if (!user) { navigate('/login', { replace: true }); return; }
+        setUserId(user.id);
 
-      const { data } = await supabase
-        .from('user_data')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+        const { data } = await supabase
+          .from('user_data')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
 
-      if (data) {
-        if (data.dog) setDogState(data.dog);
-        if (data.weights) setWeightsState(data.weights);
-        if (data.health) setHealthState(data.health);
-      } else {
-        await supabase.from('user_data').insert({
-          user_id: user.id,
-          dog: INIT_DOG,
-          weights: INIT_WEIGHTS,
-          health: INIT_HEALTH,
-        });
+        if (data) {
+          if (data.dog) setDogState(data.dog);
+          if (data.weights) setWeightsState(data.weights);
+          if (data.health) setHealthState(data.health);
+        } else {
+          await supabase.from('user_data').insert({
+            user_id: user.id,
+            dog: INIT_DOG,
+            weights: INIT_WEIGHTS,
+            health: INIT_HEALTH,
+          });
+        }
+      } catch (err) {
+        console.error('WebApp init error:', err);
       }
       setLoading(false);
     }
