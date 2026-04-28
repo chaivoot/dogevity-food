@@ -346,3 +346,8 @@
   .tab-btn { white-space: nowrap; flex: 0 0 auto; }
   .bcs-grid { gap: 4px; }
 }
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar { width: 200px; }
+  .wb-content { padding: 20px 20px calc(80px + env(safe-area-inset-bottom, 0px)); }
+}
