@@ -17,10 +17,16 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
   const h = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const save = async () => {
-    updateDog({ ...form });
-    await updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    try {
+      updateDog({ ...form });
+      if (updateOwner) {
+        await updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error('Save error:', err);
+    }
   };
 
   const handlePhotoChange = async (e) => {
@@ -238,7 +244,7 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
         </div>
 
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-          <button className="wb-btn" onClick={save}>บันทึกข้อมูล</button>
+          <button className="wb-btn" onClick={() => save()}>บันทึกข้อมูล</button>
           <button className="wb-btn-outline" onClick={() => setForm(dog)}>ยกเลิก</button>
           {saved && <span style={{ fontSize: 13, color: 'var(--green)', fontWeight: 600 }}>✓ บันทึกแล้ว</span>}
           {dogs.length > 1 && (
