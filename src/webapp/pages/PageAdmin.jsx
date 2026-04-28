@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { RECIPE_CATS, RECIPE_CAT_COLORS } from '../data';
+import { calcRER, calcDER, getDERFactor, DER_FACTORS, getBCSLabel, getBCSColor, getAgeString } from '../utils';
 
 const EMPTY_ING = { name: '', cat: 'เนื้อสัตว์', amount: '', pct: 0 };
 
@@ -347,11 +348,65 @@ function ClientsTab() {
             <div>เลือกลูกค้าจากรายการทางซ้าย</div>
           </div>
         ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {/* Dog profile summary */}
+            <div className="wcard" style={{ padding: '14px 18px' }}>
+              <div style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                {selectedDog.photoUrl
+                  ? <img src={selectedDog.photoUrl} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} alt={selectedDog.name} />
+                  : <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'var(--teal-xlight)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>🐕</div>}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 800, fontSize: 16 }}>{selectedDog.name || '—'}</div>
+                  <div style={{ fontSize: 12, color: 'var(--text-light)', marginBottom: 8 }}>
+                    {[selectedDog.breed, selectedDog.sex === 'female' ? 'เพศเมีย' : 'เพศผู้', selectedDog.neutered ? '✂️ ทำหมัน' : null, selectedDog.birthYear ? getAgeString(selectedDog.birthYear, selectedDog.birthMonth) : null].filter(Boolean).join(' · ')}
+                  </div>
+                  <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', fontSize: 13 }}>
+                    {selectedDog.weight > 0 && (
+                      <div><span style={{ color: 'var(--text-light)' }}>น้ำหนัก</span><br /><strong>{selectedDog.weight} กก.</strong></div>
+                    )}
+                    {selectedDog.bcs > 0 && (() => {
+                      const rer = calcRER(selectedDog.weight);
+                      const der = calcDER(rer, selectedDog.activityLevel);
+                      return <>
+                        <div><span style={{ color: 'var(--text-light)' }}>BCS</span><br /><strong style={{ color: getBCSColor(selectedDog.bcs) }}>{selectedDog.bcs}/9 — {getBCSLabel(selectedDog.bcs)}</strong></div>
+                        <div><span style={{ color: 'var(--text-light)' }}>RER</span><br /><strong>{rer} kcal</strong></div>
+                        <div><span style={{ color: 'var(--text-light)' }}>DER</span><br /><strong style={{ color: 'var(--gold)' }}>{der} kcal/วัน</strong></div>
+                      </>;
+                    })()}
+                  </div>
+                  {selectedDog.activityLevel && (
+                    <div style={{ fontSize: 12, color: 'var(--text-light)', marginTop: 6 }}>
+                      กิจกรรม: <strong style={{ color: 'var(--text)' }}>{DER_FACTORS[selectedDog.activityLevel]?.label ?? selectedDog.activityLevel}</strong>
+                      <span style={{ marginLeft: 6 }}>({getDERFactor(selectedDog.activityLevel)}× RER)</span>
+                    </div>
+                  )}
+                  {selectedDog.currentFood && (
+                    <div style={{ fontSize: 12, marginTop: 4 }}>
+                      <span style={{ color: 'var(--text-light)' }}>อาหารปัจจุบัน:</span> {selectedDog.currentFood}
+                    </div>
+                  )}
+                  {selectedDog.allergies && (
+                    <div style={{ fontSize: 12, marginTop: 2 }}>
+                      <span style={{ color: 'var(--red)', fontWeight: 700 }}>⚠️ แพ้:</span> <span style={{ color: 'var(--red)' }}>{selectedDog.allergies}</span>
+                    </div>
+                  )}
+                  {selectedDog.conditions && (
+                    <div style={{ fontSize: 12, marginTop: 2, color: 'var(--text-light)' }}>
+                      <span style={{ fontWeight: 600 }}>โรค/ยา:</span> {selectedDog.conditions}
+                    </div>
+                  )}
+                  {selectedDog.note && (
+                    <div style={{ fontSize: 12, marginTop: 2, color: 'var(--text-light)', padding: '4px 8px', background: 'var(--bg)', borderRadius: 6 }}>{selectedDog.note}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Recipe editor */}
           <div className="wcard">
             <div className="section-hdr" style={{ marginBottom: 16 }}>
               <div className="section-hdr-title">
                 🍲 สูตรอาหารของ {selectedDog.name || 'ลูกค้า'}
-                {selectedDog.weight ? <span style={{ fontSize: 12, fontWeight: 400, color: 'var(--text-light)', marginLeft: 8 }}>{selectedDog.weight} กก.</span> : null}
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 {saved && <span style={{ fontSize: 13, color: 'var(--green)', fontWeight: 600 }}>✓ บันทึกแล้ว</span>}
@@ -418,6 +473,7 @@ function ClientsTab() {
             ) : (
               <button className="wb-btn-outline" onClick={() => setAddForm({ ...EMPTY_ING })}>+ เพิ่มวัตถุดิบ</button>
             )}
+          </div>
           </div>
         )}
       </div>
