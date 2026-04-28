@@ -4,7 +4,69 @@ import { RECIPE_CATS, RECIPE_CAT_COLORS } from '../data';
 
 const EMPTY_ING = { name: '', cat: 'เนื้อสัตว์', amount: '', pct: 0 };
 
-export default function PageAdmin() {
+function ContactsTab() {
+  const [contacts, setContacts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchContacts() {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data) setContacts(data);
+      setLoading(false);
+    }
+    fetchContacts();
+  }, []);
+
+  if (loading) return <div className="wcard" style={{ padding: 30, color: 'var(--text-light)', fontSize: 13 }}>กำลังโหลด...</div>;
+
+  if (contacts.length === 0) return (
+    <div className="wcard" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
+      <div style={{ fontSize: 36, marginBottom: 12 }}>📭</div>
+      <div>ยังไม่มีการส่งฟอร์มสมัคร</div>
+    </div>
+  );
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ fontSize: 13, color: 'var(--text-light)', marginBottom: 4 }}>
+        ทั้งหมด {contacts.length} รายการ
+      </div>
+      {contacts.map(c => (
+        <div key={c.id} className="wcard" style={{ padding: '14px 18px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontWeight: 700, fontSize: 15 }}>{c.name || '—'}</span>
+                <span style={{ fontSize: 13, color: 'var(--teal)', background: 'var(--teal-xlight)', padding: '2px 10px', borderRadius: 20 }}>
+                  🐕 {c.dog || 'ไม่ระบุชื่อหมา'}
+                </span>
+              </div>
+              <div style={{ fontSize: 13, color: 'var(--text-light)', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+                {c.weight && <span>น้ำหนัก: <strong>{c.weight} กก.</strong></span>}
+                {c.age && <span>อายุ: <strong>{c.age} ปี</strong></span>}
+                {c.phone && <span>📞 <a href={`tel:${c.phone}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{c.phone}</a></span>}
+                {c.line_id && <span style={{ color: '#06C755', fontWeight: 600 }}>💬 {c.line_id}</span>}
+              </div>
+              {c.note && (
+                <div style={{ fontSize: 12, color: 'var(--text-light)', marginTop: 2, padding: '6px 10px', background: 'var(--bg)', borderRadius: 6 }}>
+                  {c.note}
+                </div>
+              )}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-light)', whiteSpace: 'nowrap', flexShrink: 0 }}>
+              {new Date(c.created_at).toLocaleString('th-TH', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' })}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ClientsTab() {
   const [clients, setClients] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [selectedDogId, setSelectedDogId] = useState(null);
@@ -76,7 +138,6 @@ export default function PageAdmin() {
 
   return (
     <div style={{ display: 'flex', gap: 20, height: '100%' }}>
-      {/* Client list */}
       <div style={{ width: 220, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
         <div className="wcard" style={{ padding: 0 }}>
           <div style={{ padding: '14px 18px', fontWeight: 700, fontSize: 13, borderBottom: '1px solid var(--border)' }}>
@@ -111,7 +172,6 @@ export default function PageAdmin() {
           )}
         </div>
 
-        {/* Dog selector (if multiple dogs) */}
         {selectedClient?.dogs?.length > 1 && (
           <div className="wcard" style={{ padding: 0 }}>
             <div style={{ padding: '10px 14px', fontWeight: 700, fontSize: 12, borderBottom: '1px solid var(--border)', color: 'var(--text-light)' }}>
@@ -139,7 +199,6 @@ export default function PageAdmin() {
         )}
       </div>
 
-      {/* Recipe editor */}
       <div style={{ flex: 1, minWidth: 0 }}>
         {!selectedDog ? (
           <div className="wcard" style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-light)' }}>
@@ -221,6 +280,37 @@ export default function PageAdmin() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+export default function PageAdmin() {
+  const [tab, setTab] = useState('contacts');
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
+      <div style={{ display: 'flex', gap: 8, borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
+        {[
+          { id: 'contacts', label: '📋 ฟอร์มสมัคร' },
+          { id: 'clients', label: '🐕 ลูกค้า (web app)' },
+        ].map(t => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            style={{
+              padding: '10px 20px', fontSize: 13, fontWeight: tab === t.id ? 700 : 400,
+              background: 'none', border: 'none', cursor: 'pointer',
+              borderBottom: tab === t.id ? '2px solid var(--teal)' : '2px solid transparent',
+              color: tab === t.id ? 'var(--teal)' : 'var(--text-light)',
+              marginBottom: -2,
+            }}
+          >
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'contacts' ? <ContactsTab /> : <ClientsTab />}
     </div>
   );
 }

@@ -1,7 +1,11 @@
 import { useState } from 'react';
+import emailjs from '@emailjs/browser';
 import { supabase } from '../lib/supabase';
 
 const LINE_OA_URL = import.meta.env.VITE_LINE_OA_URL ?? '';
+const EJ_SERVICE = import.meta.env.VITE_EMAILJS_SERVICE_ID ?? '';
+const EJ_TEMPLATE = import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? '';
+const EJ_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? '';
 
 export default function ContactForm() {
   const [f, setF] = useState({ name: '', dog: '', weight: '', age: '', phone: '', lineId: '', note: '' });
@@ -25,6 +29,18 @@ export default function ContactForm() {
     });
     setLoading(false);
     if (err) { setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'); return; }
+    if (EJ_SERVICE && EJ_TEMPLATE && EJ_KEY) {
+      emailjs.send(EJ_SERVICE, EJ_TEMPLATE, {
+        owner_name: f.name,
+        dog_name: f.dog,
+        weight: f.weight || '—',
+        age: f.age || '—',
+        phone: f.phone || '—',
+        line_id: f.lineId || '—',
+        note: f.note || '—',
+        to_email: 'chaivoot@gmail.com',
+      }, EJ_KEY).catch(() => {});
+    }
     setSent(true);
   };
 
@@ -37,14 +53,14 @@ export default function ContactForm() {
         เพื่อเริ่มออกแบบสูตรอาหารสำหรับ <strong>{f.dog || 'น้องหมา'}</strong> โดยเฉพาะ
       </div>
       {LINE_OA_URL && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, margin: '8px 0' }}>
           <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
             <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน" height="36" />
           </a>
           <span style={{ fontSize: 14, color: '#06C755', fontWeight: 700 }}>Line ID: @dogevity</span>
         </div>
       )}
-      <a className="webapp-link" href="/app">ลองดู Web App →</a>
+      <a className="webapp-link" href="/app">ทดลองคำนวณ RER / DER ของน้องหมา</a>
     </div>
   );
 
