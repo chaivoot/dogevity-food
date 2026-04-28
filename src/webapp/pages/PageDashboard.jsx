@@ -4,10 +4,10 @@ import LineChart from '../components/LineChart';
 import { calcRER, calcDER, getDERFactor, getAgeString, getBCSLabel, getBCSColor } from '../utils';
 
 const macros = [
-  { name: 'โปรตีน', pct: 42, color: 'oklch(55% 0.16 25)' },
-  { name: 'คาร์โบ', pct: 30, color: 'oklch(55% 0.16 145)' },
-  { name: 'ไขมัน', pct: 18, color: 'var(--gold)' },
-  { name: 'แร่ธาตุ', pct: 10, color: 'var(--teal)' },
+  { name: 'โปรตีน', pct: 34, color: 'oklch(55% 0.16 25)' },
+  { name: 'คาร์โบ', pct: 40, color: 'oklch(55% 0.16 145)' },
+  { name: 'ไขมัน', pct: 16, color: 'var(--gold)' },
+  { name: 'ไฟเบอร์', pct: 10, color: 'var(--teal)' },
 ];
 
 export default function PageDashboard({ dog }) {
