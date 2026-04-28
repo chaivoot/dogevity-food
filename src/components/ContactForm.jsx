@@ -1,14 +1,31 @@
 import { useState } from 'react';
+import { supabase } from '../lib/supabase';
+
+const LINE_OA_URL = import.meta.env.VITE_LINE_OA_URL ?? '';
 
 export default function ContactForm() {
-  const [f, setF] = useState({ name: '', dog: '', weight: '', age: '', email: '', note: '' });
+  const [f, setF] = useState({ name: '', dog: '', weight: '', age: '', phone: '', lineId: '', note: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const h = (k, v) => setF(p => ({ ...p, [k]: v }));
-  const submit = e => {
+
+  const submit = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
-    setTimeout(() => { setLoading(false); setSent(true); }, 1500);
+    const { error: err } = await supabase.from('contacts').insert({
+      name: f.name,
+      dog: f.dog,
+      weight: f.weight ? +f.weight : null,
+      age: f.age ? +f.age : null,
+      phone: f.phone,
+      line_id: f.lineId,
+      note: f.note,
+    });
+    setLoading(false);
+    if (err) { setError('เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง'); return; }
+    setSent(true);
   };
 
   if (sent) return (
@@ -19,6 +36,11 @@ export default function ContactForm() {
         จะติดต่อกลับภายใน 24 ชั่วโมง<br />
         เพื่อเริ่มออกแบบสูตรอาหารสำหรับ <strong>{f.dog || 'น้องหมา'}</strong> โดยเฉพาะ
       </div>
+      {LINE_OA_URL && (
+        <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
+          <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน" height="36" />
+        </a>
+      )}
       <a className="webapp-link" href="/app">ลองดู Web App →</a>
     </div>
   );
@@ -27,6 +49,13 @@ export default function ContactForm() {
     <form onSubmit={submit}>
       <div className="form-hdr-title">เริ่มต้นออกแบบสูตรอาหาร</div>
       <div className="form-hdr-sub">กรอกข้อมูลด้านล่าง — ประเมินเบื้องต้นฟรี ไม่มีค่าใช้จ่าย</div>
+
+      {LINE_OA_URL && (
+        <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer" style={{ marginBottom: 20 }}>
+          <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน Line OA" height="36" />
+        </a>
+      )}
+
       <div className="form-grid">
         <div className="form-field">
           <label className="form-label">ชื่อเจ้าของ</label>
@@ -44,15 +73,22 @@ export default function ContactForm() {
           <label className="form-label">อายุ (ปี)</label>
           <input className="form-input" type="number" step="0.5" required value={f.age} onChange={e => h('age', e.target.value)} placeholder="0" />
         </div>
-        <div className="form-field form-full">
-          <label className="form-label">อีเมล / Line ID</label>
-          <input className="form-input" required value={f.email} onChange={e => h('email', e.target.value)} placeholder="เพื่อส่งสูตรอาหาร" />
+        <div className="form-field">
+          <label className="form-label">เบอร์โทรศัพท์</label>
+          <input className="form-input" type="tel" value={f.phone} onChange={e => h('phone', e.target.value.replace(/\D/g, ''))} placeholder="0812345678" maxLength={10} />
+        </div>
+        <div className="form-field">
+          <label className="form-label">Line ID</label>
+          <input className="form-input" value={f.lineId} onChange={e => h('lineId', e.target.value)} placeholder="@yourlineid" />
         </div>
         <div className="form-field form-full">
           <label className="form-label">ข้อมูลเพิ่มเติม (ไม่บังคับ)</label>
           <textarea className="form-textarea form-input" value={f.note} onChange={e => h('note', e.target.value)} placeholder="สายพันธุ์, อาหารที่แพ้, โรคประจำตัว..." />
         </div>
       </div>
+
+      {error && <div style={{ color: 'var(--red)', fontSize: 13, marginBottom: 10 }}>⚠️ {error}</div>}
+
       <button className="form-submit" type="submit" disabled={loading}>
         {loading ? 'กำลังส่ง...' : 'รับสูตรอาหารฟรี →'}
       </button>

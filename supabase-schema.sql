@@ -27,6 +27,27 @@ create policy "admin can update all" on user_data
   for update
   using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
 
+-- ─── Contacts (landing page form submissions) ───────────────────────────────
+create table if not exists contacts (
+  id         uuid default gen_random_uuid() primary key,
+  name       text,
+  dog        text,
+  weight     numeric,
+  age        numeric,
+  phone      text,
+  line_id    text,
+  note       text,
+  created_at timestamptz default now()
+);
+
+alter table contacts enable row level security;
+
+create policy "anyone can submit contact" on contacts
+  for insert with check (true);
+
+create policy "admin can read contacts" on contacts
+  for select using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
+
 -- ─── Storage (dog photos) ───────────────────────────────────────────────────
 -- 1. Create bucket via Supabase Dashboard → Storage → New bucket
 --    Name: dog-photos   Public: YES
