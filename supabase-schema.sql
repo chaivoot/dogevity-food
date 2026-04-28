@@ -45,8 +45,13 @@ alter table contacts enable row level security;
 create policy "anyone can submit contact" on contacts
   for insert with check (true);
 
+alter table contacts add column if not exists recipe jsonb default '[]';
+
 create policy "admin can read contacts" on contacts
   for select using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
+
+create policy "admin can update contacts" on contacts
+  for update using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
 
 -- ─── Storage (dog photos) ───────────────────────────────────────────────────
 -- 1. Create bucket via Supabase Dashboard → Storage → New bucket
