@@ -371,7 +371,10 @@ function ClientsTab() {
                   }}
                 >
                   <div onClick={() => selectClient(c.user_id)} style={{ flex: 1, cursor: 'pointer' }}>
-                    <div>{firstDog?.name || '(ยังไม่ได้กรอกชื่อ)'}</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span>{firstDog?.recipe?.length > 0 ? '✅' : '⏳'}</span>
+                      <span>{firstDog?.name || '(ยังไม่ได้กรอกชื่อ)'}</span>
+                    </div>
                     <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>
                       {c.dogs?.length > 1 ? `${c.dogs.length} ตัว` : firstDog?.breed || '—'}
                     </div>
