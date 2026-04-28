@@ -25,9 +25,9 @@ export const ingData = {
 };
 
 export const macros = [
-  { name: 'โปรตีน', pct: 42, color: 'oklch(55% 0.16 25)' },
-  { name: 'คาร์โบไฮเดรต', pct: 30, color: 'oklch(58% 0.16 145)' },
-  { name: 'ไขมัน', pct: 18, color: 'oklch(68% 0.14 78)' },
+  { name: 'โปรตีน', pct: 34, color: 'oklch(55% 0.16 25)' },
+  { name: 'คาร์โบไฮเดรต', pct: 40, color: 'oklch(58% 0.16 145)' },
+  { name: 'ไขมัน', pct: 16, color: 'oklch(68% 0.14 78)' },
   { name: 'ใยอาหาร & แร่ธาตุ', pct: 10, color: 'var(--teal)' },
 ];
 

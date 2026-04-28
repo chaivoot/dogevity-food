@@ -44,12 +44,11 @@ export default function Nav() {
           {links.map(l => (
             <li key={l.id}><a href="#" onClick={e => { e.preventDefault(); scrollTo(l.id, close); }}>{l.label}</a></li>
           ))}
-          <li><a href="/login">เข้าสู่ระบบ</a></li>
         </ul>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <a className="nav-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta', close); }}>
-            รับสูตรอาหารฟรี
+          <a className="nav-cta" href="/app">
+            วิเคราะห์น้องหมา ฟรี
           </a>
           {/* Hamburger button — mobile only */}
           <button className="nav-hamburger" onClick={() => setOpen(v => !v)} aria-label="เมนู">
@@ -71,9 +70,8 @@ export default function Nav() {
             {l.label}
           </a>
         ))}
-        <a className="nav-mobile-link" href="/login" onClick={close}>เข้าสู่ระบบ</a>
-        <a className="nav-mobile-cta" href="#" onClick={e => { e.preventDefault(); scrollTo('cta', close); }}>
-          รับสูตรอาหารฟรี →
+        <a className="nav-mobile-cta" href="/app" onClick={close}>
+          วิเคราะห์น้องหมา ฟรี →
         </a>
       </div>
     </>

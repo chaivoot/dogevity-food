@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 
-export default function Counter({ target, suffix }) {
+export default function Counter({ target, suffix, prefix = '' }) {
   const [val, setVal] = useState(0);
   const ref = useRef(null);
 
@@ -22,5 +22,5 @@ export default function Counter({ target, suffix }) {
     return () => obs.disconnect();
   }, [target]);
 
-  return <div className="stat-num" ref={ref}>{val}{suffix}</div>;
+  return <div className="stat-num" ref={ref}>{prefix}{val}{suffix}</div>;
 }

@@ -23,8 +23,8 @@ export default function Hero() {
           แต่คือโภชนาการที่แท้จริง สำหรับน้องหมาแต่ละตัวของคุณ
         </p>
         <div className="hero-ctas fi d3">
-          <a className="btn-primary" href="#" onClick={e => { e.preventDefault(); scrollTo('cta'); }}>
-            เริ่มต้นออกแบบสูตรอาหาร
+          <a className="btn-primary" href="/app">
+            สร้างโปรไฟล์สุขภาพ และ เริ่มวิเคราะห์ฟรี
           </a>
           <a className="btn-ghost" href="#" onClick={e => { e.preventDefault(); scrollTo('solution'); }}>
             ดูวิธีการ →
@@ -32,7 +32,7 @@ export default function Hero() {
         </div>
         <div className="hero-stats fi">
           <div>
-            <Counter target={18} suffix="+" />
+            <Counter prefix=">" target={20} />
             <div className="stat-label">วัตถุดิบที่คัดสรรและคำนวณ</div>
           </div>
           <div>
@@ -40,14 +40,14 @@ export default function Hero() {
             <div className="stat-label">ออกแบบเฉพาะน้องหมาของคุณ</div>
           </div>
           <div>
-            <Counter target={3} suffix=" รายการ" />
-            <div className="stat-label">ใบรับรองระดับสากล</div>
+            <Counter target={52} suffix=" Weeks" />
+            <div className="stat-label">ติดตามโภชนาการต่อเนื่อง</div>
           </div>
         </div>
       </div>
       <div className="hero-img-side fi d2">
         <div className="hero-img-circle">
-          <img src="/recallers-pic01.png" alt="น้องหมา" />
+          <img src="/sheltie-hero.jpg" alt="น้องหมา" />
         </div>
         <div className="hero-cert-float">
           <div className="hcf-icon">🎓</div>
