@@ -59,14 +59,15 @@ export default function PageDashboard({ dog }) {
       {/* Energy metric cards */}
       <div className="grid-4">
         {[
-          { label: 'RER', val: dog.weight ? rer : '—', unit: 'kcal/วัน', sub: 'Resting Energy', pct: 70, color: 'var(--teal)' },
-          { label: 'DER', val: dog.weight ? der : '—', unit: 'kcal/วัน', sub: `${getDERFactor(dog.activityLevel)}× RER`, pct: 85, color: 'var(--gold)' },
-          { label: 'BCS', val: `${dog.bcs}`, unit: '/9', sub: getBCSLabel(dog.bcs), pct: (dog.bcs / 9) * 100, color: bcsColor },
-          { label: 'น้ำหนัก', val: dog.weight || '—', unit: 'กก.', sub: targetWeight !== dog.weight ? `เป้า ${targetWeight} กก.` : 'น้ำหนักปัจจุบัน', pct: Math.min(100, (dog.weight / (targetWeight || 1)) * 80), color: 'oklch(56% 0.16 145)' },
+          { label: 'RER', desc: 'พลังงานขณะพัก', val: dog.weight ? rer : '—', unit: 'kcal/วัน', sub: 'พลังงานพื้นฐาน', pct: 70, color: 'var(--teal)' },
+          { label: 'DER', desc: 'พลังงานต่อวัน', val: dog.weight ? der : '—', unit: 'kcal/วัน', sub: `${getDERFactor(dog.activityLevel)}× RER`, pct: 85, color: 'var(--gold)' },
+          { label: 'BCS', desc: 'ความสมบูรณ์ร่างกาย', val: `${dog.bcs}`, unit: '/9', sub: getBCSLabel(dog.bcs), pct: (dog.bcs / 9) * 100, color: bcsColor },
+          { label: 'น้ำหนัก', desc: null, val: dog.weight || '—', unit: 'กก.', sub: targetWeight !== dog.weight ? `เป้า ${targetWeight} กก.` : 'น้ำหนักปัจจุบัน', pct: Math.min(100, (dog.weight / (targetWeight || 1)) * 80), color: 'oklch(56% 0.16 145)' },
         ].map((c, i) => (
           <div key={i} className="metric-card">
             <div className="card-title">{c.label}</div>
-            <div style={{ position: 'relative', width: 80, height: 80, margin: '8px auto' }}>
+            {c.desc && <div style={{ fontSize: 10, color: 'var(--text-light)', textAlign: 'center', marginTop: -2, marginBottom: 2 }}>{c.desc}</div>}
+            <div style={{ position: 'relative', width: 80, height: 80, margin: '4px auto 8px' }}>
               <Ring pct={c.pct} color={c.color} size={80} strokeW={8} />
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', textAlign: 'center' }}>
                 <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--text)', lineHeight: 1 }}>{c.val}</div>

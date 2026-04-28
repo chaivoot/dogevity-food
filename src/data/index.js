@@ -1,26 +1,26 @@
 export const ingData = {
   'เนื้อสัตว์': [
-    { name: 'ปลาแพงกาเซีย', amount: '600 ก./สัปดาห์', pct: 28, color: 'oklch(55% 0.16 25)' },
-    { name: 'ปลาซาบะ', amount: '350 ก./สัปดาห์', pct: 16, color: 'oklch(62% 0.14 25)' },
-    { name: 'หมูบด + เนื้อบด', amount: '300 ก./สัปดาห์', pct: 14, color: 'oklch(60% 0.12 15)' },
-    { name: 'หอยแมลงภู่ + ไก่บด', amount: '375 ก./สัปดาห์', pct: 12, color: 'oklch(65% 0.13 30)' },
+    { name: 'ปลาแพงกาเซีย', amount: '~86 ก./วัน', pct: 28, color: 'oklch(55% 0.16 25)' },
+    { name: 'ปลาซาบะ', amount: '50 ก./วัน', pct: 16, color: 'oklch(62% 0.14 25)' },
+    { name: 'หมูบด + เนื้อบด', amount: '~43 ก./วัน', pct: 14, color: 'oklch(60% 0.12 15)' },
+    { name: 'หอยแมลงภู่ + ไก่บด', amount: '~54 ก./วัน', pct: 12, color: 'oklch(65% 0.13 30)' },
   ],
   'เครื่องใน': [
-    { name: 'ตับไก่', amount: '~128 ก./สัปดาห์', pct: 45, color: 'oklch(50% 0.15 330)' },
-    { name: 'กึ๋นไก่', amount: '~128 ก./สัปดาห์', pct: 30, color: 'oklch(58% 0.13 320)' },
-    { name: 'หัวใจไก่', amount: '~129 ก./สัปดาห์', pct: 25, color: 'oklch(55% 0.14 340)' },
+    { name: 'ตับไก่', amount: '~18 ก./วัน', pct: 45, color: 'oklch(50% 0.15 330)' },
+    { name: 'กึ๋นไก่', amount: '~18 ก./วัน', pct: 30, color: 'oklch(58% 0.13 320)' },
+    { name: 'หัวใจไก่', amount: '~18 ก./วัน', pct: 25, color: 'oklch(55% 0.14 340)' },
   ],
   'คาร์โบ & ผัก': [
-    { name: 'ข้าวไรซ์เบอร์รี', amount: '616 ก./สัปดาห์', pct: 40, color: 'oklch(42% 0.08 240)' },
-    { name: 'ฟักทอง', amount: '370 ก./สัปดาห์', pct: 24, color: 'oklch(68% 0.15 65)' },
-    { name: 'บร็อคโคลี่แช่แข็ง', amount: '320 ก./สัปดาห์', pct: 21, color: 'oklch(58% 0.16 145)' },
-    { name: 'ผักสลัดคอส', amount: '160 ก./สัปดาห์', pct: 11, color: 'oklch(65% 0.14 140)' },
+    { name: 'ข้าวไรซ์เบอร์รี', amount: '~88 ก./วัน', pct: 40, color: 'oklch(42% 0.08 240)' },
+    { name: 'ฟักทอง', amount: '~53 ก./วัน', pct: 24, color: 'oklch(68% 0.15 65)' },
+    { name: 'บร็อคโคลี่แช่แข็ง', amount: '~46 ก./วัน', pct: 21, color: 'oklch(58% 0.16 145)' },
+    { name: 'ผักสลัดคอส', amount: '~23 ก./วัน', pct: 11, color: 'oklch(65% 0.14 140)' },
   ],
   'อาหารเสริม': [
-    { name: 'ไข่ไก่', amount: '6 ฟอง/สัปดาห์', pct: 30, color: 'oklch(72% 0.14 78)' },
-    { name: 'เปลือกไข่บด', amount: '6-7 ช้อนชา/สัปดาห์', pct: 20, color: 'oklch(78% 0.08 80)' },
-    { name: 'Kelp + Triple Omega', amount: '12 + 3 เม็ด/สัปดาห์', pct: 15, color: 'var(--teal)' },
-    { name: 'เมล็ดฟักทอง + ทานตะวัน', amount: '6 ช้อนโต๊ะ/สัปดาห์', pct: 12, color: 'oklch(62% 0.12 145)' },
+    { name: 'ไข่ไก่', amount: '~1 ฟอง/วัน', pct: 30, color: 'oklch(72% 0.14 78)' },
+    { name: 'เปลือกไข่บด', amount: '~1 ช้อนชา/วัน', pct: 20, color: 'oklch(78% 0.08 80)' },
+    { name: 'Kelp + Triple Omega', amount: '~2 เม็ด Kelp/วัน · Omega วันเว้นวัน', pct: 15, color: 'var(--teal)' },
+    { name: 'เมล็ดฟักทอง + ทานตะวัน', amount: '~1 ช.ต./วัน', pct: 12, color: 'oklch(62% 0.12 145)' },
   ],
 };
 
