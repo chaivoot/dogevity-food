@@ -13,11 +13,19 @@ import './webapp.css';
 
 const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL ?? '';
 
+const ScaleIcon = ({ size = 18 }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="7" width="18" height="12" rx="3.5"/>
+    <rect x="7.5" y="11" width="9" height="4" rx="1"/>
+    <path d="M8 19v1.5M16 19v1.5"/>
+  </svg>
+);
+
 const NAV = [
   { id: 'dashboard', icon: '🏠', label: 'Home' },
   { id: 'profile', icon: '🐕', label: 'โปรไฟล์' },
   { id: 'recipe', icon: '🍲', label: 'สูตรอาหาร' },
-  { id: 'weight', icon: '⚖️', label: 'น้ำหนัก' },
+  { id: 'weight', icon: <ScaleIcon size={20} />, label: 'น้ำหนัก' },
   { id: 'health', icon: '💉', label: 'สุขภาพ' },
 ];
 
@@ -187,7 +195,7 @@ export default function WebApp() {
             { id: 'dashboard', icon: '🏠', label: 'Dashboard' },
             { id: 'profile', icon: '🐕', label: 'โปรไฟล์น้องหมา' },
             { id: 'recipe', icon: '🍲', label: 'สูตรอาหาร' },
-            { id: 'weight', icon: '⚖️', label: 'น้ำหนัก' },
+            { id: 'weight', icon: <ScaleIcon />, label: 'น้ำหนัก' },
             { id: 'health', icon: '💉', label: 'วัคซีน & สุขภาพ' },
           ].map(n => (
             <div key={n.id} className={`sb-item${page === n.id ? ' active' : ''}`} onClick={() => setPage(n.id)}>
