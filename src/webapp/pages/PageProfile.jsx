@@ -16,9 +16,9 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
 
   const h = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
-  const save = () => {
+  const save = async () => {
     updateDog({ ...form });
-    updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
+    await updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
