@@ -164,9 +164,21 @@ function ContactsTab() {
                 <div style={{ fontSize: 13, color: 'var(--text-light)', display: 'flex', gap: 16, flexWrap: 'wrap' }}>
                   {c.weight && <span>น้ำหนัก: <strong>{c.weight} กก.</strong></span>}
                   {c.age && <span>อายุ: <strong>{c.age} ปี</strong></span>}
+                  {c.bcs && <span>BCS: <strong>{c.bcs}/9</strong></span>}
                   {c.phone && <span onClick={e => e.stopPropagation()}>📞 <a href={`tel:${c.phone}`} style={{ color: 'var(--text)', textDecoration: 'none' }}>{c.phone}</a></span>}
                   {c.line_id && <span style={{ color: '#06C755', fontWeight: 600 }}>💬 {c.line_id}</span>}
                 </div>
+                {c.current_food && (
+                  <div style={{ fontSize: 12, color: 'var(--text-light)', display: 'flex', gap: 6 }}>
+                    <span style={{ color: 'var(--text-mid)', fontWeight: 600 }}>อาหารปัจจุบัน:</span> {c.current_food}
+                  </div>
+                )}
+                {c.allergies && (
+                  <div style={{ fontSize: 12, display: 'flex', gap: 6 }}>
+                    <span style={{ color: 'var(--red)', fontWeight: 600 }}>⚠️ แพ้:</span>
+                    <span style={{ color: 'var(--red)' }}>{c.allergies}</span>
+                  </div>
+                )}
                 {c.note && (
                   <div style={{ fontSize: 12, color: 'var(--text-light)', marginTop: 2, padding: '6px 10px', background: 'var(--bg)', borderRadius: 6 }}>
                     {c.note}

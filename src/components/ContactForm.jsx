@@ -8,7 +8,7 @@ const EJ_TEMPLATE = import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? '';
 const EJ_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY ?? '';
 
 export default function ContactForm() {
-  const [f, setF] = useState({ name: '', dog: '', weight: '', age: '', phone: '', lineId: '', note: '' });
+  const [f, setF] = useState({ name: '', dog: '', weight: '', age: '', bcs: '', currentFood: '', allergies: '', phone: '', lineId: '', note: '' });
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -23,6 +23,9 @@ export default function ContactForm() {
       dog: f.dog,
       weight: f.weight ? +f.weight : null,
       age: f.age ? +f.age : null,
+      bcs: f.bcs ? +f.bcs : null,
+      current_food: f.currentFood || null,
+      allergies: f.allergies || null,
       phone: f.phone,
       line_id: f.lineId,
       note: f.note,
@@ -35,6 +38,9 @@ export default function ContactForm() {
         dog_name: f.dog,
         weight: f.weight || '—',
         age: f.age || '—',
+        bcs: f.bcs || '—',
+        current_food: f.currentFood || '—',
+        allergies: f.allergies || '—',
         phone: f.phone || '—',
         line_id: f.lineId || '—',
         note: f.note || '—',
@@ -95,6 +101,25 @@ export default function ContactForm() {
           <label className="form-label">อายุ (ปี)</label>
           <input className="form-input" type="number" step="0.5" required value={f.age} onChange={e => h('age', e.target.value)} placeholder="0" />
         </div>
+        <div className="form-field form-full">
+          <label className="form-label">รูปร่างน้องหมาตอนนี้ (BCS)</label>
+          <select className="form-input" value={f.bcs} onChange={e => h('bcs', e.target.value)}>
+            <option value="">ไม่แน่ใจ / ไม่ทราบ</option>
+            <option value="2">ผอมมาก — ซี่โครง/กระดูกสันหลังเห็นชัดเจน</option>
+            <option value="4">ค่อนข้างผอม — คลำซี่โครงได้ง่ายมาก</option>
+            <option value="5">สมส่วน — คลำซี่โครงได้ แต่ไม่เห็นด้วยตา</option>
+            <option value="6">ค่อนข้างอ้วน — คลำซี่โครงได้ยาก มีไขมันหุ้ม</option>
+            <option value="8">อ้วน — คลำซี่โครงแทบไม่ได้เลย</option>
+          </select>
+        </div>
+        <div className="form-field form-full">
+          <label className="form-label">อาหารที่กินอยู่ตอนนี้</label>
+          <input className="form-input" value={f.currentFood} onChange={e => h('currentFood', e.target.value)} placeholder="เช่น Royal Canin Small Adult, อาหารกระป๋อง Hill's..." />
+        </div>
+        <div className="form-field form-full">
+          <label className="form-label">อาหารที่แพ้ / ไม่ควรกิน (ถ้ามี)</label>
+          <input className="form-input" value={f.allergies} onChange={e => h('allergies', e.target.value)} placeholder="เช่น ไก่, ข้าวสาลี, นม..." />
+        </div>
         <div className="form-field">
           <label className="form-label">เบอร์โทรศัพท์</label>
           <input className="form-input" type="tel" value={f.phone} onChange={e => h('phone', e.target.value.replace(/\D/g, ''))} placeholder="0812345678" maxLength={10} />
@@ -105,7 +130,7 @@ export default function ContactForm() {
         </div>
         <div className="form-field form-full">
           <label className="form-label">ข้อมูลเพิ่มเติม (ไม่บังคับ)</label>
-          <textarea className="form-textarea form-input" value={f.note} onChange={e => h('note', e.target.value)} placeholder="สายพันธุ์, อาหารที่แพ้, โรคประจำตัว..." />
+          <textarea className="form-textarea form-input" value={f.note} onChange={e => h('note', e.target.value)} placeholder="สายพันธุ์, โรคประจำตัว, ยาที่กินอยู่..." />
         </div>
       </div>
 

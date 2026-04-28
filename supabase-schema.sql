@@ -45,7 +45,10 @@ alter table contacts enable row level security;
 create policy "anyone can submit contact" on contacts
   for insert with check (true);
 
-alter table contacts add column if not exists recipe jsonb default '[]';
+alter table contacts add column if not exists recipe     jsonb    default '[]';
+alter table contacts add column if not exists bcs         numeric;
+alter table contacts add column if not exists current_food text;
+alter table contacts add column if not exists allergies   text;
 
 create policy "admin can read contacts" on contacts
   for select using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
