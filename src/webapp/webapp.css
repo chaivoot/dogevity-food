@@ -356,7 +356,7 @@
   .topbar { height: 44px; padding: 0 12px; }
   .topbar-title { font-size: 14px; }
   .topbar-badge { font-size: 10px; padding: 3px 8px; }
-  .wb-content { padding: 12px 16px calc(70px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+  .wb-content { padding: 12px 16px calc(120px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
   .sidebar { width: 140px; }
   .sb-logo { height: 24px; }
   .sb-nav { padding: 4px 6px; }
