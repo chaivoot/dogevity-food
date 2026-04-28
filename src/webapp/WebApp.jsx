@@ -45,8 +45,12 @@ export default function WebApp() {
   const [activeDogId, setActiveDogId] = useState(null);
   const [ownerPhone, setOwnerPhone] = useState('');
   const [ownerLineId, setOwnerLineId] = useState('');
+  const [allDogsWithRecipes, setAllDogsWithRecipes] = useState([]);
+  const [adminSelectedDogId, setAdminSelectedDogId] = useState(null);
 
-  const dog = dogs.find(d => d.id === activeDogId) ?? dogs[0] ?? newDogEntry();
+  const dog = isAdmin && adminSelectedDogId
+    ? allDogsWithRecipes.find(d => d.id === adminSelectedDogId)
+    : dogs.find(d => d.id === activeDogId) ?? dogs[0] ?? newDogEntry();
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -59,7 +63,16 @@ export default function WebApp() {
         const user = await getUser();
         if (!user) { navigate('/login', { replace: true }); return; }
         setUserId(user.id);
-        if (ADMIN_EMAIL && user.email === ADMIN_EMAIL) setIsAdmin(true);
+        const isAdminUser = ADMIN_EMAIL && user.email === ADMIN_EMAIL;
+        if (isAdminUser) {
+          setIsAdmin(true);
+          const { data: allData } = await supabase.from('user_data').select('dogs');
+          if (allData) {
+            const dogsWithRecipe = allData.flatMap(u => (u.dogs ?? []).filter(d => d.recipe?.length > 0));
+            setAllDogsWithRecipes(dogsWithRecipe);
+            if (dogsWithRecipe.length > 0) setAdminSelectedDogId(dogsWithRecipe[0].id);
+          }
+        }
 
         const { data } = await supabase
           .from('user_data').select('*').eq('user_id', user.id).single();
@@ -260,7 +273,15 @@ export default function WebApp() {
           <div className="topbar-btn" onClick={() => setPage('profile')} title="ตั้งค่า">⚙️</div>
         </div>
         <div className="wb-content">
-          {page === 'dashboard' && <PageDashboard dog={dog} />}
+          {page === 'dashboard' && (
+            <PageDashboard
+              dog={dog}
+              isAdmin={isAdmin}
+              allDogsWithRecipes={allDogsWithRecipes}
+              adminSelectedDogId={adminSelectedDogId}
+              setAdminSelectedDogId={setAdminSelectedDogId}
+            />
+          )}
           {page === 'profile' && (
             <PageProfile
               dog={dog} updateDog={updateDog}

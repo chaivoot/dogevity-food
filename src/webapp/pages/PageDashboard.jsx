@@ -10,7 +10,7 @@ const macros = [
   { name: 'ไฟเบอร์', pct: 10, color: 'var(--teal)' },
 ];
 
-export default function PageDashboard({ dog }) {
+export default function PageDashboard({ dog, isAdmin, allDogsWithRecipes, adminSelectedDogId, setAdminSelectedDogId }) {
   const rer = calcRER(dog.weight);
   const der = calcDER(rer, dog.activityLevel);
   const targetWeight = dog.targetWeight || dog.weight;
@@ -22,6 +22,31 @@ export default function PageDashboard({ dog }) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {/* Admin dog carousel */}
+      {isAdmin && allDogsWithRecipes.length > 0 && (
+        <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8, scrollBehavior: 'smooth' }}>
+          {allDogsWithRecipes.map(d => (
+            <div
+              key={d.id}
+              onClick={() => setAdminSelectedDogId(d.id)}
+              style={{
+                flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                cursor: 'pointer', padding: '8px 12px', borderRadius: 12,
+                background: d.id === adminSelectedDogId ? 'var(--teal-xlight)' : 'transparent',
+                border: `2px solid ${d.id === adminSelectedDogId ? 'var(--teal)' : 'var(--border)'}`,
+              }}
+            >
+              <div style={{ width: 50, height: 50, borderRadius: '50%', overflow: 'hidden', background: 'var(--teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>
+                {d.photoUrl ? <img src={d.photoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={d.name} /> : '🐕'}
+              </div>
+              <div style={{ fontSize: 10, fontWeight: d.id === adminSelectedDogId ? 700 : 400, color: d.id === adminSelectedDogId ? 'var(--teal)' : 'var(--text)', maxWidth: 60, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {d.name || '(ไม่มีชื่อ)'}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Profile summary */}
       <div className="profile-card">
         <div className="profile-top">
