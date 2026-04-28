@@ -319,10 +319,14 @@
   color: oklch(50% 0.14 75); display: flex; align-items: center; gap: 5px;
 }
 
+/* Mobile dog switcher — shown only on mobile */
+.mobile-dog-switcher { display: none; margin-bottom: 16px; }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .sidebar { display: none; }
   .bottom-nav { display: flex; }
+  .mobile-dog-switcher { display: block; }
   .webapp-root { flex-direction: column; }
   .wb-main { height: 100vh; }
   .topbar { padding: 0 16px; height: 54px; }

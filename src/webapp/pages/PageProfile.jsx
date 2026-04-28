@@ -3,7 +3,7 @@ import { getBCSLabel, getBCSColor } from '../utils';
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 
-export default function PageProfile({ dog, updateDog, dogs, addDog, deleteDog, uploadPhoto, isNew }) {
+export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActiveDogId, addDog, deleteDog, uploadPhoto, isNew }) {
   const [form, setForm] = useState(dog);
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -44,6 +44,38 @@ export default function PageProfile({ dog, updateDog, dogs, addDog, deleteDog, u
 
   return (
     <div style={{ maxWidth: 700 }}>
+      {/* Mobile-only dog switcher */}
+      <div className="mobile-dog-switcher">
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {dogs.map(d => (
+            <div
+              key={d.id}
+              onClick={() => setActiveDogId(d.id)}
+              style={{
+                flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                padding: '8px 12px', borderRadius: 12, cursor: 'pointer',
+                background: d.id === activeDogId ? 'var(--teal-xlight)' : 'var(--bg)',
+                border: `1.5px solid ${d.id === activeDogId ? 'var(--teal)' : 'var(--border)'}`,
+              }}
+            >
+              <div style={{ width: 40, height: 40, borderRadius: '50%', overflow: 'hidden', background: 'var(--teal)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+                {d.photoUrl ? <img src={d.photoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={d.name} /> : '🐕'}
+              </div>
+              <div style={{ fontSize: 11, fontWeight: d.id === activeDogId ? 700 : 400, color: d.id === activeDogId ? 'var(--teal)' : 'var(--text)', maxWidth: 60, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {d.name || '(ไม่มีชื่อ)'}
+              </div>
+            </div>
+          ))}
+          <div
+            onClick={addDog}
+            style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, padding: '8px 12px', borderRadius: 12, cursor: 'pointer', background: 'var(--bg)', border: '1.5px dashed var(--border)' }}
+          >
+            <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg)', border: '1.5px dashed var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>➕</div>
+            <div style={{ fontSize: 11, color: 'var(--text-light)' }}>เพิ่มหมา</div>
+          </div>
+        </div>
+      </div>
+
       {isNew && (
         <div style={{ background: 'oklch(94% 0.06 185)', border: '1px solid var(--teal)', borderRadius: 12, padding: '14px 18px', marginBottom: 16, fontSize: 14, color: 'oklch(35% 0.12 185)' }}>
           👋 <strong>ยินดีต้อนรับ!</strong> กรุณากรอกข้อมูลน้องหมาของคุณก่อนเริ่มใช้งาน

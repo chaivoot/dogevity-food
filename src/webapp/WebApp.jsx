@@ -239,7 +239,8 @@ export default function WebApp() {
           {page === 'profile' && (
             <PageProfile
               dog={dog} updateDog={updateDog}
-              dogs={dogs} addDog={addDog} deleteDog={deleteDog}
+              dogs={dogs} activeDogId={activeDogId} setActiveDogId={setActiveDogId}
+              addDog={addDog} deleteDog={deleteDog}
               uploadPhoto={uploadPhoto} isNew={!dog.name}
             />
           )}
