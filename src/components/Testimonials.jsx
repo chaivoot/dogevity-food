@@ -7,8 +7,8 @@ export default function Testimonials() {
         <div className="testi-header">
           <div className="eyebrow eyebrow-gold fi">รีวิวจากเจ้าของน้องหมา</div>
           <h2 className="section-title fi" style={{ textAlign: 'center' }}>
-            พวกเขาพูดว่าอะไร<br />
-            <span style={{ color: 'var(--teal)' }}>หลังเริ่มเปลี่ยนอาหาร</span>
+            ผลลัพธ์​ที่น่าสนใจ<br />
+            <span style={{ color: 'var(--teal)' }}>หลังจากเปลี่ยนอาหาร</span>
           </h2>
         </div>
         <div className="testi-grid">
