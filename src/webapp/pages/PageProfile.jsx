@@ -3,7 +3,7 @@ import { getBCSLabel, getBCSColor } from '../utils';
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 
-export default function PageProfile({ dog, setDog }) {
+export default function PageProfile({ dog, setDog, isNew }) {
   const [form, setForm] = useState(dog);
   const [saved, setSaved] = useState(false);
   const h = (k, v) => setForm(f => ({ ...f, [k]: v }));
@@ -11,6 +11,11 @@ export default function PageProfile({ dog, setDog }) {
 
   return (
     <div style={{ maxWidth: 700 }}>
+      {isNew && (
+        <div style={{ background: 'oklch(94% 0.06 185)', border: '1px solid var(--teal)', borderRadius: 12, padding: '14px 18px', marginBottom: 16, fontSize: 14, color: 'oklch(35% 0.12 185)' }}>
+          👋 <strong>ยินดีต้อนรับ!</strong> กรุณากรอกข้อมูลน้องหมาของคุณก่อนเริ่มใช้งาน
+        </div>
+      )}
       <div className="wcard">
         <div className="form-section">
           <div className="form-section-title">ข้อมูลพื้นฐาน</div>
@@ -58,15 +63,34 @@ export default function PageProfile({ dog, setDog }) {
               <input className="wb-input" type="number" step="0.1" value={form.weight} onChange={e => h('weight', +e.target.value)} />
             </div>
             <div className="form-field">
+              <label className="form-label">น้ำหนักเป้าหมาย (กก.)</label>
+              <input className="wb-input" type="number" step="0.1" value={form.targetWeight || ''} onChange={e => h('targetWeight', +e.target.value)} placeholder="ปล่อยว่างถ้าไม่มีเป้าหมาย" />
+            </div>
+            <div className="form-field">
               <label className="form-label">ส่วนสูง (ซม.)</label>
               <input className="wb-input" type="number" step="1" value={form.height} onChange={e => h('height', +e.target.value)} />
             </div>
-            <div className="form-field">
-              <label className="form-label">ระดับกิจกรรม</label>
+            <div className="form-field form-full">
+              <label className="form-label">หมวดหมู่ AAFCO (ใช้คำนวณ DER)</label>
               <select className="wb-select" value={form.activityLevel} onChange={e => h('activityLevel', e.target.value)}>
-                <option value="low">น้อย (เดินสั้นๆ)</option>
-                <option value="moderate">ปานกลาง (30-60 นาที/วัน)</option>
-                <option value="high">มาก (วิ่ง/ว่ายน้ำ)</option>
+                <optgroup label="สุนัขโตเต็มวัย (Maintenance)">
+                  <option value="neutered">ทำหมันแล้ว — 1.6 × RER</option>
+                  <option value="intact">ยังไม่ทำหมัน — 1.8 × RER</option>
+                  <option value="obese_prone">มีแนวโน้มอ้วนง่าย — 1.4 × RER</option>
+                  <option value="weight_loss">อยู่ในช่วงลดน้ำหนัก — 1.0 × RER</option>
+                </optgroup>
+                <optgroup label="สุนัขใช้งาน / มีกิจกรรม">
+                  <option value="light_work">ทำงานเบา / กิจกรรมปานกลาง — 2.0 × RER</option>
+                  <option value="heavy_work">ทำงานหนัก / กิจกรรมมาก — 5.0 × RER (3–8×)</option>
+                </optgroup>
+                <optgroup label="ช่วงการเจริญเติบโต">
+                  <option value="puppy_young">ลูกสุนัขอายุ ≤4 เดือน — 3.0 × RER</option>
+                  <option value="puppy_old">ลูกสุนัขอายุ &gt;4 เดือน — 2.0 × RER</option>
+                </optgroup>
+                <optgroup label="ตั้งท้องและให้นมลูก">
+                  <option value="pregnancy">ตั้งท้อง &gt;21 วัน — 3.0 × RER</option>
+                  <option value="lactation">ให้นมลูก — 6.0 × RER (4–8×)</option>
+                </optgroup>
               </select>
             </div>
           </div>

@@ -1,8 +1,7 @@
 import Ring from '../components/Ring';
 import DonutChart from '../components/DonutChart';
 import LineChart from '../components/LineChart';
-import { calcRER, calcDER, getAgeString, getBCSLabel, getBCSColor } from '../utils';
-import { TARGET_WEIGHT } from '../data';
+import { calcRER, calcDER, getDERLabel, getDERFactor, getAgeString, getBCSLabel, getBCSColor } from '../utils';
 
 const macros = [
   { name: 'โปรตีน', pct: 42, color: 'oklch(55% 0.16 25)' },
@@ -13,7 +12,8 @@ const macros = [
 
 export default function PageDashboard({ dog, weights, health }) {
   const rer = calcRER(dog.weight);
-  const der = calcDER(rer, dog.activityLevel, dog.neutered);
+  const der = calcDER(rer, dog.activityLevel);
+  const targetWeight = dog.targetWeight || dog.weight;
   const lastWeights = weights.slice(-8);
   const bcsColor = getBCSColor(dog.bcs);
   const upcoming = health.filter(h => h.status === 'soon');
@@ -54,9 +54,9 @@ export default function PageDashboard({ dog, weights, health }) {
       <div className="grid-4">
         {[
           { label: 'RER', val: rer, unit: 'kcal/วัน', sub: 'Resting Energy', pct: 70, color: 'var(--teal)' },
-          { label: 'DER', val: der, unit: 'kcal/วัน', sub: 'Daily Energy', pct: 85, color: 'var(--gold)' },
+          { label: 'DER', val: der, unit: 'kcal/วัน', sub: `${getDERFactor(dog.activityLevel)}× RER`, pct: 85, color: 'var(--gold)' },
           { label: 'BCS', val: `${dog.bcs}`, unit: '/9', sub: getBCSLabel(dog.bcs), pct: (dog.bcs / 9) * 100, color: bcsColor },
-          { label: 'น้ำหนัก', val: dog.weight, unit: 'กก.', sub: `เป้า ${TARGET_WEIGHT} กก.`, pct: Math.min(100, (dog.weight / TARGET_WEIGHT) * 80), color: 'oklch(56% 0.16 145)' },
+          { label: 'น้ำหนัก', val: dog.weight, unit: 'กก.', sub: targetWeight !== dog.weight ? `เป้า ${targetWeight} กก.` : 'น้ำหนักปัจจุบัน', pct: Math.min(100, (dog.weight / (targetWeight || dog.weight)) * 80), color: 'oklch(56% 0.16 145)' },
         ].map((c, i) => (
           <div key={i} className="metric-card">
             <div className="card-title">{c.label}</div>
@@ -78,7 +78,7 @@ export default function PageDashboard({ dog, weights, health }) {
           <div className="section-hdr">
             <div className="section-hdr-title">📈 กราฟน้ำหนัก</div>
           </div>
-          <LineChart data={lastWeights} color="var(--teal)" targetWeight={TARGET_WEIGHT} />
+          <LineChart data={lastWeights} color="var(--teal)" targetWeight={targetWeight} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 10, fontSize: 12, color: 'var(--text-light)' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
               <svg width="20" height="4"><line x1="0" y1="2" x2="20" y2="2" stroke="var(--teal)" strokeWidth="2.5" /></svg>น้ำหนักจริง

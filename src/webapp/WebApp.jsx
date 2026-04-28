@@ -2,13 +2,16 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { getUser, clearSession } from './auth';
-import { INIT_DOG, INIT_WEIGHTS, INIT_HEALTH } from './data';
+import { INIT_DOG, INIT_WEIGHTS, INIT_HEALTH, INIT_RECIPE } from './data';
 import PageDashboard from './pages/PageDashboard';
 import PageProfile from './pages/PageProfile';
 import PageRecipe from './pages/PageRecipe';
 import PageWeight from './pages/PageWeight';
 import PageHealth from './pages/PageHealth';
+import PageAdmin from './pages/PageAdmin';
 import './webapp.css';
+
+const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL ?? '';
 
 const NAV = [
   { id: 'dashboard', icon: '🏠', label: 'Home' },
@@ -24,6 +27,7 @@ const PAGE_TITLES = {
   recipe: 'สูตรอาหาร',
   weight: 'ติดตามน้ำหนัก',
   health: 'วัคซีน & สุขภาพ',
+  admin: 'Admin Panel',
 };
 
 export default function WebApp() {
@@ -31,9 +35,11 @@ export default function WebApp() {
   const [page, setPage] = useState('dashboard');
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [dog, setDogState] = useState(INIT_DOG);
   const [weights, setWeightsState] = useState(INIT_WEIGHTS);
   const [health, setHealthState] = useState(INIT_HEALTH);
+  const [recipe, setRecipeState] = useState(INIT_RECIPE);
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -46,6 +52,7 @@ export default function WebApp() {
         const user = await getUser();
         if (!user) { navigate('/login', { replace: true }); return; }
         setUserId(user.id);
+        if (ADMIN_EMAIL && user.email === ADMIN_EMAIL) setIsAdmin(true);
 
         const { data } = await supabase
           .from('user_data')
@@ -57,12 +64,14 @@ export default function WebApp() {
           if (data.dog) setDogState(data.dog);
           if (data.weights) setWeightsState(data.weights);
           if (data.health) setHealthState(data.health);
+          if (data.recipe) setRecipeState(data.recipe);
         } else {
           await supabase.from('user_data').insert({
             user_id: user.id,
             dog: INIT_DOG,
             weights: INIT_WEIGHTS,
             health: INIT_HEALTH,
+            recipe: INIT_RECIPE,
           });
         }
       } catch (err) {
@@ -72,6 +81,11 @@ export default function WebApp() {
     }
     init();
   }, [navigate]);
+
+  // Redirect new users (no dog name) to profile page
+  useEffect(() => {
+    if (!loading && !dog.name) setPage('profile');
+  }, [loading, dog.name]);
 
   const save = useCallback(async (col, val) => {
     if (!userId) return;
@@ -83,6 +97,7 @@ export default function WebApp() {
   const setDog = (v) => { setDogState(v); save('dog', v); };
   const setWeights = (v) => { setWeightsState(v); save('weights', v); };
   const setHealth = (v) => { setHealthState(v); save('health', v); };
+  const setRecipe = (v) => { setRecipeState(v); save('recipe', v); };
 
   const logout = async () => { await clearSession(); navigate('/login', { replace: true }); };
 
@@ -97,6 +112,8 @@ export default function WebApp() {
     );
   }
 
+  const isNew = !dog.name;
+
   return (
     <div className="webapp-root">
       {/* SIDEBAR */}
@@ -108,8 +125,8 @@ export default function WebApp() {
           <div className="sb-dog-switcher" onClick={() => setPage('profile')}>
             <div className="sb-avatar">🐕</div>
             <div>
-              <div className="sb-dog-name">{dog.name}</div>
-              <div className="sb-dog-sub">{dog.breed} · {dog.weight} กก.</div>
+              <div className="sb-dog-name">{dog.name || 'ยังไม่ได้กรอกชื่อ'}</div>
+              <div className="sb-dog-sub">{dog.breed || '—'}{dog.weight ? ` · ${dog.weight} กก.` : ''}</div>
             </div>
             <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-light)' }}>▾</div>
           </div>
@@ -128,6 +145,14 @@ export default function WebApp() {
               {n.label}
             </div>
           ))}
+          {isAdmin && (
+            <>
+              <div className="sb-section-label" style={{ marginTop: 12 }}>Admin</div>
+              <div className={`sb-item${page === 'admin' ? ' active' : ''}`} onClick={() => setPage('admin')}>
+                <span className="sb-item-icon">🛠️</span>จัดการลูกค้า
+              </div>
+            </>
+          )}
           <div className="sb-section-label" style={{ marginTop: 12 }}>ลิงก์</div>
           <div className="sb-item" onClick={() => navigate('/')}>
             <span className="sb-item-icon">🌐</span>DogevityFood.com
@@ -149,15 +174,16 @@ export default function WebApp() {
       <div className="wb-main">
         <div className="topbar">
           <div className="topbar-title">{PAGE_TITLES[page]}</div>
-          <div className="topbar-badge">🐾 {dog.name}</div>
+          <div className="topbar-badge">🐾 {dog.name || 'ยังไม่ได้กรอกข้อมูล'}</div>
           <div className="topbar-btn" onClick={() => setPage('profile')} title="ตั้งค่า">⚙️</div>
         </div>
         <div className="wb-content">
           {page === 'dashboard' && <PageDashboard dog={dog} weights={weights} health={health} />}
-          {page === 'profile' && <PageProfile dog={dog} setDog={setDog} />}
-          {page === 'recipe' && <PageRecipe dog={dog} />}
+          {page === 'profile' && <PageProfile dog={dog} setDog={setDog} isNew={isNew} />}
+          {page === 'recipe' && <PageRecipe dog={dog} recipe={recipe} />}
           {page === 'weight' && <PageWeight dog={dog} setDog={setDog} weights={weights} setWeights={setWeights} />}
           {page === 'health' && <PageHealth health={health} setHealth={setHealth} />}
+          {page === 'admin' && isAdmin && <PageAdmin />}
         </div>
       </div>
 
