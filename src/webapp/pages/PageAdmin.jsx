@@ -670,6 +670,7 @@ function AdminDashboardTab() {
   );
 }
 
+export default function PageAdmin() {
   const [tab, setTab] = useState('dashboard');
 
   return (
