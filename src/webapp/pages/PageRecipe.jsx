@@ -3,10 +3,11 @@ import { calcRER, calcDER, getDERFactor } from '../utils';
 
 const CATS = ['all', 'เนื้อสัตว์', 'เครื่องใน', 'คาร์โบ', 'ผัก', 'อาหารเสริม'];
 
-export default function PageRecipe({ dog, recipe }) {
+export default function PageRecipe({ dog }) {
   const rer = calcRER(dog.weight);
   const der = calcDER(rer, dog.activityLevel);
   const [activeTab, setActiveTab] = useState('all');
+  const recipe = dog.recipe ?? [];
   const filtered = activeTab === 'all' ? recipe : recipe.filter(i => i.cat === activeTab);
 
   return (

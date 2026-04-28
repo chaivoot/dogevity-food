@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { getUser, clearSession } from './auth';
-import { INIT_DOG, INIT_WEIGHTS, INIT_HEALTH, INIT_RECIPE } from './data';
+import { newDogEntry } from './data';
 import PageDashboard from './pages/PageDashboard';
 import PageProfile from './pages/PageProfile';
 import PageRecipe from './pages/PageRecipe';
@@ -22,12 +22,9 @@ const NAV = [
 ];
 
 const PAGE_TITLES = {
-  dashboard: 'Dashboard',
-  profile: 'โปรไฟล์น้องหมา',
-  recipe: 'สูตรอาหาร',
-  weight: 'ติดตามน้ำหนัก',
-  health: 'วัคซีน & สุขภาพ',
-  admin: 'Admin Panel',
+  dashboard: 'Dashboard', profile: 'โปรไฟล์น้องหมา',
+  recipe: 'สูตรอาหาร', weight: 'ติดตามน้ำหนัก',
+  health: 'วัคซีน & สุขภาพ', admin: 'Admin Panel',
 };
 
 export default function WebApp() {
@@ -36,10 +33,10 @@ export default function WebApp() {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [dog, setDogState] = useState(INIT_DOG);
-  const [weights, setWeightsState] = useState(INIT_WEIGHTS);
-  const [health, setHealthState] = useState(INIT_HEALTH);
-  const [recipe, setRecipeState] = useState(INIT_RECIPE);
+  const [dogs, setDogs] = useState([]);
+  const [activeDogId, setActiveDogId] = useState(null);
+
+  const dog = dogs.find(d => d.id === activeDogId) ?? dogs[0] ?? newDogEntry();
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -55,24 +52,30 @@ export default function WebApp() {
         if (ADMIN_EMAIL && user.email === ADMIN_EMAIL) setIsAdmin(true);
 
         const { data } = await supabase
-          .from('user_data')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
+          .from('user_data').select('*').eq('user_id', user.id).single();
 
         if (data) {
-          if (data.dog) setDogState(data.dog);
-          if (data.weights) setWeightsState(data.weights);
-          if (data.health) setHealthState(data.health);
-          if (data.recipe) setRecipeState(data.recipe);
+          if (data.dogs && data.dogs.length > 0) {
+            setDogs(data.dogs);
+            setActiveDogId(data.dogs[0].id);
+          } else {
+            // Migrate from old single-dog schema
+            const entry = { ...newDogEntry(), ...(data.dog ?? {}) };
+            if (data.weights) entry.weights = data.weights;
+            if (data.health) entry.health = data.health;
+            if (data.recipe) entry.recipe = data.recipe;
+            const migrated = [entry];
+            setDogs(migrated);
+            setActiveDogId(entry.id);
+            await supabase.from('user_data')
+              .update({ dogs: migrated, updated_at: new Date().toISOString() })
+              .eq('user_id', user.id);
+          }
         } else {
-          await supabase.from('user_data').insert({
-            user_id: user.id,
-            dog: INIT_DOG,
-            weights: INIT_WEIGHTS,
-            health: INIT_HEALTH,
-            recipe: INIT_RECIPE,
-          });
+          const entry = newDogEntry();
+          setDogs([entry]);
+          setActiveDogId(entry.id);
+          await supabase.from('user_data').insert({ user_id: user.id, dogs: [entry] });
         }
       } catch (err) {
         console.error('WebApp init error:', err);
@@ -82,22 +85,56 @@ export default function WebApp() {
     init();
   }, [navigate]);
 
-  // Redirect new users (no dog name) to profile page
   useEffect(() => {
     if (!loading && !dog.name) setPage('profile');
   }, [loading, dog.name]);
 
-  const save = useCallback(async (col, val) => {
+  const saveDogs = useCallback(async (updatedDogs) => {
     if (!userId) return;
     await supabase.from('user_data')
-      .update({ [col]: val, updated_at: new Date().toISOString() })
+      .update({ dogs: updatedDogs, updated_at: new Date().toISOString() })
       .eq('user_id', userId);
   }, [userId]);
 
-  const setDog = (v) => { setDogState(v); save('dog', v); };
-  const setWeights = (v) => { setWeightsState(v); save('weights', v); };
-  const setHealth = (v) => { setHealthState(v); save('health', v); };
-  const setRecipe = (v) => { setRecipeState(v); save('recipe', v); };
+  const updateDog = useCallback((fields) => {
+    setDogs(prev => {
+      const updated = prev.map(d =>
+        d.id === (fields.id ?? activeDogId) ? { ...d, ...fields } : d
+      );
+      saveDogs(updated);
+      return updated;
+    });
+  }, [activeDogId, saveDogs]);
+
+  const addDog = () => {
+    const entry = newDogEntry();
+    setDogs(prev => {
+      const updated = [...prev, entry];
+      saveDogs(updated);
+      return updated;
+    });
+    setActiveDogId(entry.id);
+    setPage('profile');
+  };
+
+  const deleteDog = (id) => {
+    setDogs(prev => {
+      if (prev.length <= 1) return prev;
+      const updated = prev.filter(d => d.id !== id);
+      saveDogs(updated);
+      if (activeDogId === id) setActiveDogId(updated[0].id);
+      return updated;
+    });
+  };
+
+  const uploadPhoto = async (dogId, file) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const path = `${userId}/${dogId}.${ext}`;
+    const { error } = await supabase.storage.from('dog-photos').upload(path, file, { upsert: true });
+    if (error) throw error;
+    const { data } = supabase.storage.from('dog-photos').getPublicUrl(path);
+    return data.publicUrl;
+  };
 
   const logout = async () => { await clearSession(); navigate('/login', { replace: true }); };
 
@@ -112,8 +149,6 @@ export default function WebApp() {
     );
   }
 
-  const isNew = !dog.name;
-
   return (
     <div className="webapp-root">
       {/* SIDEBAR */}
@@ -121,18 +156,33 @@ export default function WebApp() {
         <div className="sb-header">
           <img src="/dogevityfoodlogo-transparent.png" className="sb-logo" alt="Dogevity" />
         </div>
-        <div style={{ padding: '4px 0' }}>
-          <div className="sb-dog-switcher" onClick={() => setPage('profile')}>
-            <div className="sb-avatar">🐕</div>
-            <div>
-              <div className="sb-dog-name">{dog.name || 'ยังไม่ได้กรอกชื่อ'}</div>
-              <div className="sb-dog-sub">{dog.breed || '—'}{dog.weight ? ` · ${dog.weight} กก.` : ''}</div>
+
+        <div className="sb-nav" style={{ overflowY: 'auto' }}>
+          {/* Dog switcher */}
+          <div className="sb-section-label">น้องหมา</div>
+          {dogs.map(d => (
+            <div
+              key={d.id}
+              className={`sb-dog-item${d.id === activeDogId ? ' active' : ''}`}
+              onClick={() => { setActiveDogId(d.id); setPage('dashboard'); }}
+            >
+              <div className="sb-avatar">
+                {d.photoUrl
+                  ? <img src={d.photoUrl} className="sb-avatar-img" alt={d.name} />
+                  : '🐕'}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div className="sb-dog-name">{d.name || 'ยังไม่ได้กรอกชื่อ'}</div>
+                <div className="sb-dog-sub">{d.breed || '—'}{d.weight ? ` · ${d.weight} กก.` : ''}</div>
+              </div>
             </div>
-            <div style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--text-light)' }}>▾</div>
+          ))}
+          <div className="sb-item" style={{ color: 'var(--teal)' }} onClick={addDog}>
+            <span className="sb-item-icon">➕</span>เพิ่มน้องหมา
           </div>
-        </div>
-        <div className="sb-nav">
-          <div className="sb-section-label">เมนู</div>
+
+          {/* Main menu */}
+          <div className="sb-section-label" style={{ marginTop: 12 }}>เมนู</div>
           {[
             { id: 'dashboard', icon: '🏠', label: 'Dashboard' },
             { id: 'profile', icon: '🐕', label: 'โปรไฟล์น้องหมา' },
@@ -141,10 +191,10 @@ export default function WebApp() {
             { id: 'health', icon: '💉', label: 'วัคซีน & สุขภาพ' },
           ].map(n => (
             <div key={n.id} className={`sb-item${page === n.id ? ' active' : ''}`} onClick={() => setPage(n.id)}>
-              <span className="sb-item-icon">{n.icon}</span>
-              {n.label}
+              <span className="sb-item-icon">{n.icon}</span>{n.label}
             </div>
           ))}
+
           {isAdmin && (
             <>
               <div className="sb-section-label" style={{ marginTop: 12 }}>Admin</div>
@@ -153,6 +203,7 @@ export default function WebApp() {
               </div>
             </>
           )}
+
           <div className="sb-section-label" style={{ marginTop: 12 }}>ลิงก์</div>
           <div className="sb-item" onClick={() => navigate('/')}>
             <span className="sb-item-icon">🌐</span>DogevityFood.com
@@ -161,6 +212,7 @@ export default function WebApp() {
             <span className="sb-item-icon">🚪</span>ออกจากระบบ
           </div>
         </div>
+
         <div className="sb-footer">
           <div style={{ fontWeight: 700, color: 'var(--teal)', marginBottom: 2 }}>Dogevity Food</div>
           <div>Pet Nutrition · Powered by AAFCO</div>
@@ -174,15 +226,26 @@ export default function WebApp() {
       <div className="wb-main">
         <div className="topbar">
           <div className="topbar-title">{PAGE_TITLES[page]}</div>
-          <div className="topbar-badge">🐾 {dog.name || 'ยังไม่ได้กรอกข้อมูล'}</div>
+          <div className="topbar-badge">
+            {dog.photoUrl
+              ? <img src={dog.photoUrl} style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', marginRight: 4 }} />
+              : '🐾 '}
+            {dog.name || 'ยังไม่ได้กรอกข้อมูล'}
+          </div>
           <div className="topbar-btn" onClick={() => setPage('profile')} title="ตั้งค่า">⚙️</div>
         </div>
         <div className="wb-content">
-          {page === 'dashboard' && <PageDashboard dog={dog} weights={weights} health={health} />}
-          {page === 'profile' && <PageProfile dog={dog} setDog={setDog} isNew={isNew} />}
-          {page === 'recipe' && <PageRecipe dog={dog} recipe={recipe} />}
-          {page === 'weight' && <PageWeight dog={dog} setDog={setDog} weights={weights} setWeights={setWeights} />}
-          {page === 'health' && <PageHealth health={health} setHealth={setHealth} />}
+          {page === 'dashboard' && <PageDashboard dog={dog} />}
+          {page === 'profile' && (
+            <PageProfile
+              dog={dog} updateDog={updateDog}
+              dogs={dogs} addDog={addDog} deleteDog={deleteDog}
+              uploadPhoto={uploadPhoto} isNew={!dog.name}
+            />
+          )}
+          {page === 'recipe' && <PageRecipe dog={dog} />}
+          {page === 'weight' && <PageWeight dog={dog} updateDog={updateDog} />}
+          {page === 'health' && <PageHealth dog={dog} updateDog={updateDog} />}
           {page === 'admin' && isAdmin && <PageAdmin />}
         </div>
       </div>

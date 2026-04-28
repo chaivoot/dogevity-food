@@ -1,20 +1,17 @@
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor → New query)
 
 create table if not exists user_data (
-  user_id uuid references auth.users primary key,
-  dog     jsonb not null default '{}',
-  weights jsonb not null default '[]',
-  health  jsonb not null default '[]',
-  recipe  jsonb not null default '[]',
+  user_id    uuid references auth.users primary key,
+  dogs       jsonb not null default '[]',
   updated_at timestamptz default now()
 );
 
--- Add recipe column if upgrading from older schema
-alter table user_data add column if not exists recipe jsonb not null default '[]';
+-- Add dogs column if upgrading from older schema
+alter table user_data add column if not exists dogs jsonb not null default '[]';
 
 alter table user_data enable row level security;
 
--- Users can manage their own data
+-- Users manage their own data
 create policy "users manage own data" on user_data
   for all
   using  (auth.uid() = user_id)
@@ -29,3 +26,29 @@ create policy "admin can read all" on user_data
 create policy "admin can update all" on user_data
   for update
   using (auth.jwt() ->> 'email' = 'chaivoot@gmail.com');
+
+-- ─── Storage (dog photos) ───────────────────────────────────────────────────
+-- 1. Create bucket via Supabase Dashboard → Storage → New bucket
+--    Name: dog-photos   Public: YES
+-- 2. Then run these RLS policies:
+
+create policy "users upload own dog photos" on storage.objects
+  for insert with check (
+    bucket_id = 'dog-photos'
+    and auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+create policy "dog photos are public" on storage.objects
+  for select using (bucket_id = 'dog-photos');
+
+create policy "users update own dog photos" on storage.objects
+  for update using (
+    bucket_id = 'dog-photos'
+    and auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+create policy "users delete own dog photos" on storage.objects
+  for delete using (
+    bucket_id = 'dog-photos'
+    and auth.uid()::text = (storage.foldername(name))[1]
+  );

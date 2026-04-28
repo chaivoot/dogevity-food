@@ -1,13 +1,46 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { getBCSLabel, getBCSColor } from '../utils';
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 
-export default function PageProfile({ dog, setDog, isNew }) {
+export default function PageProfile({ dog, updateDog, dogs, addDog, deleteDog, uploadPhoto, isNew }) {
   const [form, setForm] = useState(dog);
   const [saved, setSaved] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState('');
+  const fileRef = useRef();
+
+  // Sync form when active dog changes
+  if (form.id !== dog.id) setForm(dog);
+
   const h = (k, v) => setForm(f => ({ ...f, [k]: v }));
-  const save = () => { setDog(form); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+
+  const save = () => {
+    updateDog({ ...form });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setUploadErr('ไฟล์ใหญ่เกิน 5MB'); return; }
+    setUploadErr('');
+    setUploading(true);
+    try {
+      const url = await uploadPhoto(dog.id, file);
+      updateDog({ id: dog.id, photoUrl: url });
+      setForm(f => ({ ...f, photoUrl: url }));
+    } catch {
+      setUploadErr('อัพโหลดไม่สำเร็จ ลองใหม่อีกครั้ง');
+    }
+    setUploading(false);
+  };
+
+  const confirmDelete = () => {
+    if (dogs.length <= 1) return;
+    if (window.confirm(`ลบ "${dog.name || 'น้องหมา'}" ออกจากระบบ?`)) deleteDog(dog.id);
+  };
 
   return (
     <div style={{ maxWidth: 700 }}>
@@ -16,7 +49,26 @@ export default function PageProfile({ dog, setDog, isNew }) {
           👋 <strong>ยินดีต้อนรับ!</strong> กรุณากรอกข้อมูลน้องหมาของคุณก่อนเริ่มใช้งาน
         </div>
       )}
+
       <div className="wcard">
+        {/* Photo upload */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, marginBottom: 24 }}>
+          <div className="dog-photo-wrap" onClick={() => fileRef.current.click()}>
+            {form.photoUrl
+              ? <img src={form.photoUrl} className="dog-photo" alt={form.name} />
+              : <div className="dog-photo-placeholder">{uploading ? '⏳' : '🐕'}<div style={{ fontSize: 10, marginTop: 4 }}>{uploading ? 'กำลังอัพโหลด...' : 'คลิกเพื่ออัพโหลดรูป'}</div></div>
+            }
+            <div className="dog-photo-overlay">📷</div>
+          </div>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)', marginBottom: 4 }}>{form.name || 'ยังไม่ได้กรอกชื่อ'}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-light)', marginBottom: 10 }}>{form.breed || '—'}</div>
+            {uploadErr && <div style={{ fontSize: 12, color: 'var(--red)', marginBottom: 6 }}>⚠️ {uploadErr}</div>}
+            <div style={{ fontSize: 11, color: 'var(--text-light)' }}>รองรับ JPG, PNG ขนาดไม่เกิน 5MB</div>
+          </div>
+          <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" style={{ display: 'none' }} onChange={handlePhotoChange} />
+        </div>
+
         <div className="form-section">
           <div className="form-section-title">ข้อมูลพื้นฐาน</div>
           <div className="wb-form-grid">
@@ -60,7 +112,7 @@ export default function PageProfile({ dog, setDog, isNew }) {
           <div className="wb-form-grid">
             <div className="form-field">
               <label className="form-label">น้ำหนัก (กก.)</label>
-              <input className="wb-input" type="number" step="0.1" value={form.weight} onChange={e => h('weight', +e.target.value)} />
+              <input className="wb-input" type="number" step="0.1" value={form.weight || ''} onChange={e => h('weight', +e.target.value)} />
             </div>
             <div className="form-field">
               <label className="form-label">น้ำหนักเป้าหมาย (กก.)</label>
@@ -68,7 +120,7 @@ export default function PageProfile({ dog, setDog, isNew }) {
             </div>
             <div className="form-field">
               <label className="form-label">ส่วนสูง (ซม.)</label>
-              <input className="wb-input" type="number" step="1" value={form.height} onChange={e => h('height', +e.target.value)} />
+              <input className="wb-input" type="number" step="1" value={form.height || ''} onChange={e => h('height', +e.target.value)} />
             </div>
             <div className="form-field form-full">
               <label className="form-label">หมวดหมู่ AAFCO (ใช้คำนวณ DER)</label>
@@ -94,6 +146,7 @@ export default function PageProfile({ dog, setDog, isNew }) {
               </select>
             </div>
           </div>
+
           <div style={{ marginTop: 16 }}>
             <div className="form-label" style={{ marginBottom: 10 }}>BCS Score — 1 ผอมมาก · 5 สมส่วน · 9 อ้วนมากเกิน</div>
             <div className="bcs-grid">
@@ -136,10 +189,15 @@ export default function PageProfile({ dog, setDog, isNew }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button className="wb-btn" onClick={save}>บันทึกข้อมูล</button>
           <button className="wb-btn-outline" onClick={() => setForm(dog)}>ยกเลิก</button>
           {saved && <span style={{ fontSize: 13, color: 'var(--green)', fontWeight: 600 }}>✓ บันทึกแล้ว</span>}
+          {dogs.length > 1 && (
+            <button onClick={confirmDelete} style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--red)', color: 'var(--red)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}>
+              🗑 ลบน้องหมานี้
+            </button>
+          )}
         </div>
       </div>
     </div>

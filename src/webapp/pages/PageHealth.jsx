@@ -7,19 +7,21 @@ const statusBadge = { ok: 'badge-green', soon: 'badge-gold', overdue: 'badge-red
 
 const EMPTY_FORM = { type: 'vaccine', name: '', date: '', nextDate: '', status: 'ok', note: '' };
 
-export default function PageHealth({ health, setHealth }) {
+export default function PageHealth({ dog, updateDog }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const h = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
+  const health = dog.health ?? [];
+
   const addRecord = () => {
     if (!form.name) return;
-    setHealth([...health, { ...form, id: Date.now() }]);
+    updateDog({ health: [...health, { ...form, id: Date.now() }] });
     setShowForm(false);
     setForm(EMPTY_FORM);
   };
 
-  const deleteRecord = (id) => setHealth(health.filter(r => r.id !== id));
+  const deleteRecord = (id) => updateDog({ health: health.filter(r => r.id !== id) });
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -73,6 +75,10 @@ export default function PageHealth({ health, setHealth }) {
               <button className="wb-btn-outline" onClick={() => setShowForm(false)}>ยกเลิก</button>
             </div>
           </div>
+        )}
+
+        {health.length === 0 && !showForm && (
+          <div style={{ color: 'var(--text-light)', fontSize: 13, padding: '12px 0' }}>ยังไม่มีประวัติสุขภาพ กด "+ เพิ่มรายการ" เพื่อเริ่มต้น</div>
         )}
 
         {health.map(r => (
