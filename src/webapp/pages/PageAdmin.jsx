@@ -587,13 +587,96 @@ function ClientsTab() {
   );
 }
 
-export default function PageAdmin() {
-  const [tab, setTab] = useState('contacts');
+function AdminDashboardTab() {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      const { data } = await supabase.from('user_data').select('dogs');
+      if (!data) return;
+
+      const allDogs = data.flatMap(u => u.dogs || []);
+      const withRecipe = allDogs.filter(d => d.recipe?.length > 0).length;
+      const withAllergies = allDogs.filter(d => d.allergies).length;
+      const withConditions = allDogs.filter(d => d.conditions).length;
+
+      const bcsGroups = { 'ผอม (1-3)': 0, 'สมส่วน (4-5)': 0, 'อ้วน (6-9)': 0, 'ไม่ระบุ': 0 };
+      allDogs.forEach(d => {
+        if (!d.bcs) bcsGroups['ไม่ระบุ']++;
+        else if (d.bcs <= 3) bcsGroups['ผอม (1-3)']++;
+        else if (d.bcs <= 5) bcsGroups['สมส่วน (4-5)']++;
+        else bcsGroups['อ้วน (6-9)']++;
+      });
+
+      setStats({
+        totalClients: data.length,
+        totalDogs: allDogs.length,
+        dogsWithRecipe: withRecipe,
+        recipeCoverage: allDogs.length ? Math.round((withRecipe / allDogs.length) * 100) : 0,
+        withAllergies,
+        withConditions,
+        bcsGroups,
+      });
+      setLoading(false);
+    }
+    fetchStats();
+  }, []);
+
+  if (loading) return <div style={{ padding: 20, color: 'var(--text-light)' }}>กำลังโหลด...</div>;
+  if (!stats) return <div style={{ padding: 20, color: 'var(--text-light)' }}>ไม่มีข้อมูล</div>;
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <div className="grid-4">
+        {[
+          { label: 'ลูกค้าทั้งหมด', val: stats.totalClients, color: 'var(--teal)' },
+          { label: 'น้องหมาทั้งหมด', val: stats.totalDogs, color: 'var(--gold)' },
+          { label: 'ได้รับสูตรแล้ว', val: stats.dogsWithRecipe, color: 'var(--green)' },
+          { label: 'ครอบคลุม', val: `${stats.recipeCoverage}%`, color: 'var(--text)' },
+        ].map((c, i) => (
+          <div key={i} className="wcard" style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-light)', fontWeight: 600, marginBottom: 8 }}>{c.label}</div>
+            <div style={{ fontSize: 28, fontWeight: 800, color: c.color }}>{c.val}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid-2">
+        <div className="wcard">
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>🐕 BCS Distribution</div>
+          {Object.entries(stats.bcsGroups).map(([k, v]) => (
+            <div key={k} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <div style={{ flex: 1, fontSize: 12 }}>{k}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{v}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="wcard">
+          <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12 }}>⚠️ Health Issues</div>
+          {[
+            { label: 'มีอาหารที่แพ้', val: stats.withAllergies },
+            { label: 'มีโรคประจำตัว', val: stats.withConditions },
+          ].map((c, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+              <div style={{ flex: 1, fontSize: 12 }}>{c.label}</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--red)' }}>{c.val}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+  const [tab, setTab] = useState('dashboard');
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
       <div style={{ display: 'flex', gap: 8, borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
         {[
+          { id: 'dashboard', label: '📊 Dashboard' },
           { id: 'contacts', label: '📋 ฟอร์มสมัคร' },
           { id: 'clients', label: '🐕 ลูกค้า (web app)' },
         ].map(t => (
@@ -613,7 +696,9 @@ export default function PageAdmin() {
         ))}
       </div>
 
-      {tab === 'contacts' ? <ContactsTab /> : <ClientsTab />}
+      {tab === 'dashboard' && <AdminDashboardTab />}
+      {tab === 'contacts' && <ContactsTab />}
+      {tab === 'clients' && <ClientsTab />}
     </div>
   );
 }
