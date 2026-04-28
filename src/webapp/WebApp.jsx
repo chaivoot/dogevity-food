@@ -43,6 +43,8 @@ export default function WebApp() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [dogs, setDogs] = useState([]);
   const [activeDogId, setActiveDogId] = useState(null);
+  const [ownerPhone, setOwnerPhone] = useState('');
+  const [ownerLineId, setOwnerLineId] = useState('');
 
   const dog = dogs.find(d => d.id === activeDogId) ?? dogs[0] ?? newDogEntry();
 
@@ -63,6 +65,11 @@ export default function WebApp() {
           .from('user_data').select('*').eq('user_id', user.id).single();
 
         if (data) {
+          if (data.owner_phone) setOwnerPhone(data.owner_phone);
+          if (data.owner_line_id) setOwnerLineId(data.owner_line_id);
+          if (!data.email) {
+            supabase.from('user_data').update({ email: user.email }).eq('user_id', user.id);
+          }
           if (data.dogs && data.dogs.length > 0) {
             setDogs(data.dogs);
             setActiveDogId(data.dogs[0].id);
@@ -83,7 +90,7 @@ export default function WebApp() {
           const entry = newDogEntry();
           setDogs([entry]);
           setActiveDogId(entry.id);
-          await supabase.from('user_data').insert({ user_id: user.id, dogs: [entry] });
+          await supabase.from('user_data').insert({ user_id: user.id, email: user.email, dogs: [entry] });
         }
       } catch (err) {
         console.error('WebApp init error:', err);
@@ -143,6 +150,16 @@ export default function WebApp() {
     const { data } = supabase.storage.from('dog-photos').getPublicUrl(path);
     return data.publicUrl;
   };
+
+  const updateOwner = useCallback(async ({ phone, lineId }) => {
+    if (phone !== undefined) setOwnerPhone(phone);
+    if (lineId !== undefined) setOwnerLineId(lineId);
+    if (!userId) return;
+    const update = {};
+    if (phone !== undefined) update.owner_phone = phone;
+    if (lineId !== undefined) update.owner_line_id = lineId;
+    await supabase.from('user_data').update(update).eq('user_id', userId);
+  }, [userId]);
 
   const logout = async () => { await clearSession(); navigate('/login', { replace: true }); };
 
@@ -250,6 +267,7 @@ export default function WebApp() {
               dogs={dogs} activeDogId={activeDogId} setActiveDogId={setActiveDogId}
               addDog={addDog} deleteDog={deleteDog}
               uploadPhoto={uploadPhoto} isNew={!dog.name}
+              ownerPhone={ownerPhone} ownerLineId={ownerLineId} updateOwner={updateOwner}
             />
           )}
           {page === 'recipe' && <PageRecipe dog={dog} />}

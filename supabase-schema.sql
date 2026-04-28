@@ -6,8 +6,10 @@ create table if not exists user_data (
   updated_at timestamptz default now()
 );
 
--- Add dogs column if upgrading from older schema
-alter table user_data add column if not exists dogs jsonb not null default '[]';
+-- Add owner contact fields to user_data
+alter table user_data add column if not exists email         text;
+alter table user_data add column if not exists owner_phone   text;
+alter table user_data add column if not exists owner_line_id text;
 
 alter table user_data enable row level security;
 
