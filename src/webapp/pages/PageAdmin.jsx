@@ -217,11 +217,13 @@ function ClientsTab() {
   const [saved, setSaved] = useState(false);
   const [addForm, setAddForm] = useState(null);
   const [loadingClients, setLoadingClients] = useState(true);
+  const [fetchError, setFetchError] = useState('');
 
   useEffect(() => {
     async function fetchClients() {
       const { data, error } = await supabase.from('user_data').select('user_id, dogs');
-      if (!error && data) setClients(data);
+      if (error) setFetchError(error.message);
+      else if (data) setClients(data);
       setLoadingClients(false);
     }
     fetchClients();
@@ -287,6 +289,8 @@ function ClientsTab() {
           </div>
           {loadingClients ? (
             <div style={{ padding: 20, color: 'var(--text-light)', fontSize: 13 }}>กำลังโหลด...</div>
+          ) : fetchError ? (
+            <div style={{ padding: 16, color: 'var(--red)', fontSize: 12 }}>⚠️ {fetchError}</div>
           ) : clients.length === 0 ? (
             <div style={{ padding: 20, color: 'var(--text-light)', fontSize: 13 }}>ยังไม่มีลูกค้า</div>
           ) : (
