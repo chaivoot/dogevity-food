@@ -331,7 +331,7 @@
   .wb-main { height: 100vh; }
   .topbar { padding: 0 16px; height: 54px; }
   .topbar-title { font-size: 16px; }
-  .wb-content { padding: 16px 16px calc(140px + env(safe-area-inset-bottom, 0px)); }
+  .wb-content { padding: 16px 16px calc(160px + env(safe-area-inset-bottom, 0px)); }
   .grid-2, .grid-3, .grid-1-2, .grid-2-1 { grid-template-columns: 1fr !important; }
   .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
   .wcard { padding: 16px; }
@@ -353,8 +353,17 @@
 }
 
 @media (orientation: landscape) and (max-height: 600px) {
-  .topbar { height: 48px; padding: 0 16px; }
-  .wb-content { padding: 16px 16px calc(100px + env(safe-area-inset-bottom, 0px)); }
-  .sidebar { width: 160px; }
-  .sb-logo { height: 28px; }
+  .topbar { height: 44px; padding: 0 12px; }
+  .topbar-title { font-size: 14px; }
+  .topbar-badge { font-size: 10px; padding: 3px 8px; }
+  .wb-content { padding: 12px 16px calc(70px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; }
+  .sidebar { width: 140px; }
+  .sb-logo { height: 24px; }
+  .sb-nav { padding: 4px 6px; }
+  .sb-item { padding: 8px 10px; font-size: 12px; }
+  .sb-section-label { padding: 8px 4px 4px; }
+  .wcard { padding: 12px 14px; }
+  .form-section { margin-bottom: 16px; }
+  .form-section-title { font-size: 12px; margin-bottom: 8px; }
+  .wb-form-grid { gap: 8px; }
 }
