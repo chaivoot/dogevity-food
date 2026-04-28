@@ -5,7 +5,7 @@ import { calcRER, calcDER, getDERFactor, getAgeString, getBCSLabel, getBCSColor 
 
 const macros = [
   { name: 'โปรตีน', pct: 34, color: 'oklch(55% 0.16 25)' },
-  { name: 'คาร์โบ', pct: 40, color: 'oklch(55% 0.16 145)' },
+  { name: 'คาร์โบไฮเดรต', pct: 40, color: 'oklch(55% 0.16 145)' },
   { name: 'ไขมัน', pct: 16, color: 'var(--gold)' },
   { name: 'ไฟเบอร์', pct: 10, color: 'var(--teal)' },
 ];
