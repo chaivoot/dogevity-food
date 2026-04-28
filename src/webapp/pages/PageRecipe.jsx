@@ -38,7 +38,21 @@ export default function PageRecipe({ dog }) {
           <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-light)' }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🍲</div>
             <div style={{ fontSize: 15, fontWeight: 600, marginBottom: 6 }}>ยังไม่มีสูตรอาหาร</div>
-            <div style={{ fontSize: 13 }}>โค้ชจะอัพเดทสูตรอาหารที่ออกแบบมาสำหรับน้องหมาของคุณโดยเฉพาะ</div>
+            <div style={{ fontSize: 13, marginBottom: 20 }}>โค้ชจะอัพเดทสูตรอาหารที่ออกแบบมาสำหรับน้องหมาของคุณโดยเฉพาะ</div>
+            <a
+              href={`https://line.me/ti/p/${import.meta.env.VITE_LINE_OA_ID ?? '@dogevity'}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 8,
+                background: '#06C755', color: '#fff', borderRadius: 10,
+                padding: '10px 22px', fontWeight: 700, fontSize: 14,
+                textDecoration: 'none',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.03 2 11c0 3.07 1.67 5.79 4.24 7.5L5.5 22l4.03-1.98C10.31 20.32 11.14 20.4 12 20.4c5.52 0 10-4.03 10-9.4C22 6.03 17.52 2 12 2z"/></svg>
+              @dogevity
+            </a>
           </div>
         ) : (
           <>

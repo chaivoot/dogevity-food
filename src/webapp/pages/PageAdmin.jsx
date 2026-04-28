@@ -221,7 +221,7 @@ function ClientsTab() {
 
   useEffect(() => {
     async function fetchClients() {
-      const { data, error } = await supabase.from('user_data').select('user_id, dogs');
+      const { data, error } = await supabase.from('user_data').select('user_id, email, owner_phone, owner_line_id, dogs');
       if (error) setFetchError(error.message);
       else if (data) setClients(data);
       setLoadingClients(false);
@@ -312,6 +312,9 @@ function ClientsTab() {
                   <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>
                     {c.dogs?.length > 1 ? `${c.dogs.length} ตัว` : firstDog?.breed || '—'}
                   </div>
+                  {c.email && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>✉️ {c.email}</div>}
+                  {c.owner_phone && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1 }}>📞 {c.owner_phone}</div>}
+                  {c.owner_line_id && <div style={{ fontSize: 10, color: '#06C755', marginTop: 1 }}>💬 {c.owner_line_id}</div>}
                 </div>
               );
             })

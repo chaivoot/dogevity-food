@@ -3,8 +3,9 @@ import { getBCSLabel, getBCSColor } from '../utils';
 
 const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 
-export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActiveDogId, addDog, deleteDog, uploadPhoto, isNew }) {
+export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActiveDogId, addDog, deleteDog, uploadPhoto, isNew, ownerPhone, ownerLineId, updateOwner }) {
   const [form, setForm] = useState(dog);
+  const [ownerForm, setOwnerForm] = useState({ phone: ownerPhone || '', lineId: ownerLineId || '' });
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState('');
@@ -17,6 +18,7 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
 
   const save = () => {
     updateDog({ ...form });
+    updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
@@ -217,6 +219,20 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
             <div className="form-field form-full">
               <label className="form-label">หมายเหตุเพิ่มเติม</label>
               <textarea className="wb-textarea wb-input" rows="2" value={form.note} onChange={e => h('note', e.target.value)} />
+            </div>
+          </div>
+        </div>
+
+        <div className="form-section">
+          <div className="form-section-title">ข้อมูลติดต่อเจ้าของ</div>
+          <div className="wb-form-grid">
+            <div className="form-field">
+              <label className="form-label">เบอร์โทรศัพท์</label>
+              <input className="wb-input" type="tel" value={ownerForm.phone} onChange={e => setOwnerForm(f => ({ ...f, phone: e.target.value }))} placeholder="0812345678" />
+            </div>
+            <div className="form-field">
+              <label className="form-label">Line ID</label>
+              <input className="wb-input" value={ownerForm.lineId} onChange={e => setOwnerForm(f => ({ ...f, lineId: e.target.value }))} placeholder="@lineid" />
             </div>
           </div>
         </div>
