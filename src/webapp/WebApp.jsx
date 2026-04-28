@@ -276,6 +276,9 @@ export default function WebApp() {
           {page === 'dashboard' && (
             <PageDashboard
               dog={dog}
+              dogs={dogs}
+              activeDogId={activeDogId}
+              setActiveDogId={setActiveDogId}
               isAdmin={isAdmin}
               allDogsWithRecipes={allDogsWithRecipes}
               adminSelectedDogId={adminSelectedDogId}
