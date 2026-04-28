@@ -218,6 +218,7 @@ function ClientsTab() {
   const [addForm, setAddForm] = useState(null);
   const [loadingClients, setLoadingClients] = useState(true);
   const [fetchError, setFetchError] = useState('');
+  const [deleteMode, setDeleteMode] = useState(false);
   const csvFileRef = useRef();
 
   useEffect(() => {
@@ -330,6 +331,20 @@ function ClientsTab() {
   return (
     <div style={{ display: 'flex', gap: 20, height: '100%' }}>
       <div style={{ width: 220, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 6, alignItems: 'center', padding: '0 8px' }}>
+          <button
+            onClick={() => setDeleteMode(!deleteMode)}
+            style={{
+              flex: 1, padding: '8px 12px', fontSize: 11, fontWeight: 600,
+              border: deleteMode ? '1.5px solid var(--red)' : '1px solid var(--border)',
+              background: deleteMode ? 'var(--red)' : 'var(--white)',
+              color: deleteMode ? 'white' : 'var(--text)',
+              borderRadius: 8, cursor: 'pointer', transition: 'all 0.2s'
+            }}
+          >
+            {deleteMode ? '🗑️ ปิด' : '🗑️ เปิด'}
+          </button>
+        </div>
         <div className="wcard" style={{ padding: 0 }}>
           <div style={{ padding: '14px 18px', fontWeight: 700, fontSize: 13, borderBottom: '1px solid var(--border)' }}>
             🐕 ลูกค้า ({clients.length})
@@ -364,16 +379,18 @@ function ClientsTab() {
                     {c.owner_phone && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1 }}>📞 {c.owner_phone}</div>}
                     {c.owner_line_id && <div style={{ fontSize: 10, color: '#06C755', marginTop: 1 }}>💬 {c.owner_line_id}</div>}
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); deleteClient(c.user_id); }}
-                    style={{
-                      background: 'none', border: '1px solid var(--red)', color: 'var(--red)',
-                      borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: 11,
-                      fontWeight: 600, flexShrink: 0
-                    }}
-                  >
-                    🗑 ลบ
-                  </button>
+                  {deleteMode && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); deleteClient(c.user_id); }}
+                      style={{
+                        background: 'none', border: '1px solid var(--red)', color: 'var(--red)',
+                        borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: 11,
+                        fontWeight: 600, flexShrink: 0
+                      }}
+                    >
+                      🗑 ลบ
+                    </button>
+                  )}
                 </div>
               );
             })
