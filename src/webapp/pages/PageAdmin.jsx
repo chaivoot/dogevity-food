@@ -280,6 +280,14 @@ function ClientsTab() {
     setAddForm(null);
   };
 
+  const deleteClient = async (userId) => {
+    if (!window.confirm('ต้องการลบข้อมูลลูกค้านี้และหมาทั้งหมด ใช่หรือไม่?')) return;
+    await supabase.from('user_data').delete().eq('user_id', userId);
+    setClients(cs => cs.filter(c => c.user_id !== userId));
+    setSelectedUserId(null);
+    setSelectedDogId(null);
+  };
+
   return (
     <div style={{ display: 'flex', gap: 20, height: '100%' }}>
       <div style={{ width: 220, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -299,22 +307,34 @@ function ClientsTab() {
               return (
                 <div
                   key={c.user_id}
-                  onClick={() => selectClient(c.user_id)}
                   style={{
-                    padding: '12px 18px', cursor: 'pointer', fontSize: 13,
+                    padding: '12px 18px', fontSize: 13,
                     borderBottom: '1px solid var(--border)',
                     background: selectedUserId === c.user_id ? 'var(--teal-light)' : 'transparent',
                     color: selectedUserId === c.user_id ? 'var(--teal)' : 'var(--text)',
                     fontWeight: selectedUserId === c.user_id ? 700 : 400,
+                    display: 'flex', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between'
                   }}
                 >
-                  <div>{firstDog?.name || '(ยังไม่ได้กรอกชื่อ)'}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>
-                    {c.dogs?.length > 1 ? `${c.dogs.length} ตัว` : firstDog?.breed || '—'}
+                  <div onClick={() => selectClient(c.user_id)} style={{ flex: 1, cursor: 'pointer' }}>
+                    <div>{firstDog?.name || '(ยังไม่ได้กรอกชื่อ)'}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 2 }}>
+                      {c.dogs?.length > 1 ? `${c.dogs.length} ตัว` : firstDog?.breed || '—'}
+                    </div>
+                    {c.email && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>✉️ {c.email}</div>}
+                    {c.owner_phone && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1 }}>📞 {c.owner_phone}</div>}
+                    {c.owner_line_id && <div style={{ fontSize: 10, color: '#06C755', marginTop: 1 }}>💬 {c.owner_line_id}</div>}
                   </div>
-                  {c.email && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>✉️ {c.email}</div>}
-                  {c.owner_phone && <div style={{ fontSize: 10, color: 'var(--text-light)', marginTop: 1 }}>📞 {c.owner_phone}</div>}
-                  {c.owner_line_id && <div style={{ fontSize: 10, color: '#06C755', marginTop: 1 }}>💬 {c.owner_line_id}</div>}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteClient(c.user_id); }}
+                    style={{
+                      background: 'none', border: '1px solid var(--red)', color: 'var(--red)',
+                      borderRadius: 6, padding: '4px 8px', cursor: 'pointer', fontSize: 11,
+                      fontWeight: 600, flexShrink: 0
+                    }}
+                  >
+                    🗑 ลบ
+                  </button>
                 </div>
               );
             })
