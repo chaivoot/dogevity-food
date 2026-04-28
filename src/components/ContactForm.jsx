@@ -37,9 +37,12 @@ export default function ContactForm() {
         เพื่อเริ่มออกแบบสูตรอาหารสำหรับ <strong>{f.dog || 'น้องหมา'}</strong> โดยเฉพาะ
       </div>
       {LINE_OA_URL && (
-        <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
-          <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน" height="36" />
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '8px 0' }}>
+          <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
+            <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน" height="36" />
+          </a>
+          <span style={{ fontSize: 14, color: '#06C755', fontWeight: 700 }}>Line ID: @dogevity</span>
+        </div>
       )}
       <a className="webapp-link" href="/app">ลองดู Web App →</a>
     </div>
@@ -51,9 +54,12 @@ export default function ContactForm() {
       <div className="form-hdr-sub">กรอกข้อมูลด้านล่าง — ประเมินเบื้องต้นฟรี ไม่มีค่าใช้จ่าย</div>
 
       {LINE_OA_URL && (
-        <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer" style={{ marginBottom: 20 }}>
-          <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน Line OA" height="36" />
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <a className="line-add-btn" href={LINE_OA_URL} target="_blank" rel="noopener noreferrer">
+            <img src="https://scdn.line-apps.com/n/line_add_friends/btn/th.png" alt="เพิ่มเพื่อน Line OA" height="36" />
+          </a>
+          <span style={{ fontSize: 14, color: '#06C755', fontWeight: 700 }}>Line ID: @dogevity</span>
+        </div>
       )}
 
       <div className="form-grid">
