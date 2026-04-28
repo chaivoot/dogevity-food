@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import { RECIPE_CATS, RECIPE_CAT_COLORS } from '../data';
 import { calcRER, calcDER, getDERFactor, DER_FACTORS, getBCSLabel, getBCSColor, getAgeString } from '../utils';
@@ -218,6 +218,7 @@ function ClientsTab() {
   const [addForm, setAddForm] = useState(null);
   const [loadingClients, setLoadingClients] = useState(true);
   const [fetchError, setFetchError] = useState('');
+  const csvFileRef = useRef();
 
   useEffect(() => {
     async function fetchClients() {
@@ -286,6 +287,44 @@ function ClientsTab() {
     setClients(cs => cs.filter(c => c.user_id !== userId));
     setSelectedUserId(null);
     setSelectedDogId(null);
+  };
+
+  const parseCSV = (text) => {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+    const nameIdx = headers.indexOf('name') >= 0 ? headers.indexOf('name') : 0;
+    const catIdx = headers.indexOf('category') >= 0 ? headers.indexOf('category') : 1;
+    const amountIdx = headers.indexOf('amount') >= 0 ? headers.indexOf('amount') : 2;
+    const pctIdx = headers.indexOf('percentage') >= 0 ? headers.indexOf('percentage') : 3;
+
+    const parsed = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(',').map(p => p.trim());
+      if (parts[nameIdx]) {
+        parsed.push({
+          name: parts[nameIdx],
+          cat: parts[catIdx] || 'เนื้อสัตว์',
+          amount: parts[amountIdx] || '',
+          pct: +parts[pctIdx] || 0,
+          color: RECIPE_CAT_COLORS[parts[catIdx] || 'เนื้อสัตว์'],
+        });
+      }
+    }
+    return parsed;
+  };
+
+  const handleCSVUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const parsed = parseCSV(text);
+    if (parsed.length === 0) {
+      alert('ไม่สามารถอ่าน CSV ได้');
+      return;
+    }
+    setRecipe(parsed);
+    csvFileRef.current.value = '';
   };
 
   return (
@@ -443,8 +482,28 @@ function ClientsTab() {
               </div>
             </div>
 
+            <div style={{ marginBottom: 12 }}>
+              <button
+                className="wb-btn-outline"
+                style={{ fontSize: 12, padding: '6px 12px' }}
+                onClick={() => csvFileRef.current.click()}
+              >
+                📤 Import CSV
+              </button>
+              <input
+                ref={csvFileRef}
+                type="file"
+                accept=".csv"
+                style={{ display: 'none' }}
+                onChange={handleCSVUpload}
+              />
+              <div style={{ fontSize: 11, color: 'var(--text-light)', marginTop: 6 }}>
+                Format: name, category, amount, percentage
+              </div>
+            </div>
+
             {recipe.length === 0 ? (
-              <div style={{ padding: '20px 0', color: 'var(--text-light)', fontSize: 13 }}>ยังไม่มีวัตถุดิบ — กด "เพิ่มวัตถุดิบ" ด้านล่าง</div>
+              <div style={{ padding: '20px 0', color: 'var(--text-light)', fontSize: 13 }}>ยังไม่มีวัตถุดิบ — Import CSV หรือกด "เพิ่มวัตถุดิบ" ด้านล่าง</div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
                 {recipe.map((ing, i) => (
