@@ -275,6 +275,7 @@ export default function WebApp() {
           {page === 'health' && <PageHealth dog={dog} updateDog={updateDog} />}
           {page === 'admin' && isAdmin && <PageAdmin />}
         </div>
+        <div className="wb-footer-spacer" />
       </div>
 
       {/* BOTTOM NAV (mobile) */}
