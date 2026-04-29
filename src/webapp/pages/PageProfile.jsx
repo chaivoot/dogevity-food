@@ -166,22 +166,22 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
               <label className="form-label">หมวดหมู่ AAFCO (ใช้คำนวณ DER)</label>
               <select className="wb-select" value={form.activityLevel} onChange={e => h('activityLevel', e.target.value)}>
                 <optgroup label="สุนัขโตเต็มวัย (Maintenance)">
-                  <option value="neutered">ทำหมันแล้ว — 1.6×</option>
-                  <option value="intact">ยังไม่ทำหมัน — 1.8×</option>
-                  <option value="obese_prone">มีแนวโน้มอ้วนง่าย — 1.4×</option>
-                  <option value="weight_loss">อยู่ในช่วงลดน้ำหนัก — 1.0×</option>
+                  <option value="neutered">ทำหมันแล้ว</option>
+                  <option value="intact">ยังไม่ทำหมัน</option>
+                  <option value="obese_prone">มีแนวโน้มอ้วนง่าย</option>
+                  <option value="weight_loss">อยู่ในช่วงลดน้ำหนัก</option>
                 </optgroup>
                 <optgroup label="สุนัขใช้งาน / มีกิจกรรม">
-                  <option value="light_work">ทำงานเบา / กิจกรรมปานกลาง — 2.0×</option>
-                  <option value="heavy_work">ทำงานหนัก / กิจกรรมมาก — 3–8×</option>
+                  <option value="light_work">ทำงานเบา / กิจกรรมปานกลาง</option>
+                  <option value="heavy_work">ทำงานหนัก / กิจกรรมมาก</option>
                 </optgroup>
                 <optgroup label="ช่วงการเจริญเติบโต">
-                  <option value="puppy_young">ลูกสุนัขอายุ ≤4 เดือน — 3.0×</option>
-                  <option value="puppy_old">ลูกสุนัขอายุ &gt;4 เดือน — 2.0×</option>
+                  <option value="puppy_young">ลูกสุนัขอายุ ≤4 เดือน</option>
+                  <option value="puppy_old">ลูกสุนัขอายุ &gt;4 เดือน</option>
                 </optgroup>
                 <optgroup label="ตั้งท้องและให้นมลูก">
-                  <option value="pregnancy">ตั้งท้อง &gt;21 วัน — 3.0×</option>
-                  <option value="lactation">ให้นมลูก — 4–8×</option>
+                  <option value="pregnancy">ตั้งท้อง &gt;21 วัน</option>
+                  <option value="lactation">ให้นมลูก</option>
                 </optgroup>
               </select>
             </div>
