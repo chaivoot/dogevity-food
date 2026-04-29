@@ -40,7 +40,7 @@ export default function Hero() {
             <div className="stat-label">ออกแบบเฉพาะน้องหมาของคุณ</div>
           </div>
           <div>
-            <Counter target={52} suffix=" Wks" />
+            <Counter target={52} suffix="w" />
             <div className="stat-label">ติดตามโภชนาการต่อเนื่อง</div>
           </div>
         </div>
