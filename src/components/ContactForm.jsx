@@ -112,7 +112,7 @@ export default function ContactForm() {
       {error && <div style={{ color: 'var(--red)', fontSize: 13, marginBottom: 10 }}>⚠️ {error}</div>}
 
       <button className="form-submit" type="submit" disabled={loading}>
-        {loading ? 'กำลังส่ง...' : 'รับสูตรอาหารฟรี →'}
+        {loading ? 'กำลังส่ง...' : 'รับผลวิเคราะห์น้องหมา →'}
       </button>
       <div className="form-note">ไม่มีค่าใช้จ่ายในการประเมินเบื้องต้น · ข้อมูลของคุณปลอดภัย 100%</div>
     </form>
