@@ -10,7 +10,7 @@ export const ingData = {
     { name: 'กึ๋นไก่', amount: '~18 ก./วัน', pct: 30, color: 'oklch(58% 0.13 320)' },
     { name: 'หัวใจไก่', amount: '~18 ก./วัน', pct: 25, color: 'oklch(55% 0.14 340)' },
   ],
-  'คาร์โบ & ผัก': [
+  'คาร์โบไฮเดรต & ผัก': [
     { name: 'ข้าวไรซ์เบอร์รี', amount: '~88 ก./วัน', pct: 40, color: 'oklch(42% 0.08 240)' },
     { name: 'ฟักทอง', amount: '~53 ก./วัน', pct: 24, color: 'oklch(68% 0.15 65)' },
     { name: 'บร็อคโคลี่แช่แข็ง', amount: '~46 ก./วัน', pct: 21, color: 'oklch(58% 0.16 145)' },
