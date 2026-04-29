@@ -6,7 +6,7 @@ export const ingData = {
     { name: 'หอยแมลงภู่ + ไก่บด', amount: '~54 ก./วัน', pct: 12, color: 'oklch(65% 0.13 30)' },
   ],
   'เครื่องใน': [
-    { name: 'ตับไก่', amount: '~18 ก./วัน', pct: 45, color: 'oklch(50% 0.15 330)' },
+    { name: 'ตับไก่', amount: '~8 ก./วัน', pct: 20, color: 'oklch(50% 0.15 330)' },
     { name: 'กึ๋นไก่', amount: '~18 ก./วัน', pct: 30, color: 'oklch(58% 0.13 320)' },
     { name: 'หัวใจไก่', amount: '~18 ก./วัน', pct: 25, color: 'oklch(55% 0.14 340)' },
   ],
