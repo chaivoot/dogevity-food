@@ -66,11 +66,41 @@ export default function WebApp() {
         const isAdminUser = ADMIN_EMAIL && user.email === ADMIN_EMAIL;
         if (isAdminUser) {
           setIsAdmin(true);
+          const adminDog = {
+            id: 'admin-demo',
+            name: 'Sheltie',
+            breed: 'Shetland Sheepdog',
+            sex: 'female',
+            neutered: true,
+            birthYear: 2019,
+            birthMonth: 6,
+            weight: 13,
+            targetWeight: 13,
+            height: 37,
+            bcs: 5,
+            activityLevel: 'neutered',
+            allergies: '',
+            currentFood: 'Home Cooked',
+            conditions: '',
+            note: 'Admin demo dog',
+            photoUrl: '/sheltie-hero.jpg',
+            recipe: [
+              { name: 'ไก่ต้ม', cat: 'เนื้อสัตว์', amount: '150g', pct: 25, color: 'oklch(55% 0.16 25)' },
+              { name: 'ข้าวขาว', cat: 'คาร์โบไฮเดรต', amount: '100g', pct: 35, color: 'oklch(42% 0.08 240)' },
+              { name: 'กระเพรา', cat: 'ผัก', amount: '50g', pct: 20, color: 'oklch(58% 0.16 145)' },
+              { name: 'น้ำมันปลา', cat: 'อาหารเสริม', amount: '10ml', pct: 10, color: 'oklch(62% 0.12 185)' },
+            ],
+            weights: [],
+            health: [],
+          };
           const { data: allData } = await supabase.from('user_data').select('dogs');
           if (allData) {
             const dogsWithRecipe = allData.flatMap(u => (u.dogs ?? []).filter(d => d.recipe?.length > 0));
-            setAllDogsWithRecipes(dogsWithRecipe);
-            if (dogsWithRecipe.length > 0) setAdminSelectedDogId(dogsWithRecipe[0].id);
+            setAllDogsWithRecipes([adminDog, ...dogsWithRecipe]);
+            setAdminSelectedDogId(adminDog.id);
+          } else {
+            setAllDogsWithRecipes([adminDog]);
+            setAdminSelectedDogId(adminDog.id);
           }
         }
 
