@@ -24,7 +24,7 @@ export default function Hero() {
         </p>
         <div className="hero-ctas fi d3">
           <a className="btn-primary" href="/app">
-            สร้างโปรไฟล์น้อง รับการวิเคราะห์ฟรี
+            คำนวณแคลน้องหมา →
           </a>
           <a className="btn-ghost" href="#" onClick={e => { e.preventDefault(); scrollTo('solution'); }}>
             ดูวิธีการ →

@@ -6,6 +6,7 @@ import Hero from './components/Hero';
 import Problem from './components/Problem';
 import Solution from './components/Solution';
 import Recipe from './components/Recipe';
+import CalorieCalculator from './components/CalorieCalculator';
 import Credentials from './components/Credentials';
 import Testimonials from './components/Testimonials';
 import CTASection from './components/CTASection';
@@ -22,6 +23,7 @@ function LandingPage() {
       <Problem />
       <Solution />
       <Recipe />
+      <CalorieCalculator />
       <Credentials />
       <Testimonials />
       <CTASection />

@@ -29,6 +29,7 @@ export default function Nav() {
     { label: 'ปัญหา', id: 'problem' },
     { label: 'วิธีการ', id: 'solution' },
     { label: 'สูตรอาหาร', id: 'recipe' },
+    { label: 'คำนวณแคล', id: 'calculator' },
     { label: 'ประสบการณ์', id: 'creds' },
   ];
 
@@ -48,7 +49,7 @@ export default function Nav() {
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <a className="nav-cta" href="/app">
-            วิเคราะห์น้องหมา ฟรี
+            คำนวณแคลน้องหมา
           </a>
           {/* Hamburger button — mobile only */}
           <button className="nav-hamburger" onClick={() => setOpen(v => !v)} aria-label="เมนู">
@@ -71,7 +72,7 @@ export default function Nav() {
           </a>
         ))}
         <a className="nav-mobile-cta" href="/app" onClick={close}>
-          วิเคราะห์น้องหมา ฟรี →
+          คำนวณแคลน้องหมา →
         </a>
       </div>
     </>
