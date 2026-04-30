@@ -290,6 +290,22 @@ function ClientsTab() {
     setSelectedDogId(null);
   };
 
+  const deleteDog = async (dogId) => {
+    if (!selectedClient) return;
+    const dogName = selectedClient.dogs?.find(d => d.id === dogId)?.name || 'ลูกค้า';
+    if (!window.confirm(`ต้องการลบ "${dogName}" ใช่หรือไม่?`)) return;
+    const updatedDogs = selectedClient.dogs.filter(d => d.id !== dogId);
+    await supabase.from('user_data')
+      .update({ dogs: updatedDogs, updated_at: new Date().toISOString() })
+      .eq('user_id', selectedUserId);
+    setClients(cs => cs.map(c =>
+      c.user_id === selectedUserId ? { ...c, dogs: updatedDogs } : c
+    ));
+    const nextDog = updatedDogs[0];
+    setSelectedDogId(nextDog?.id ?? null);
+    setRecipe(nextDog?.recipe ?? []);
+  };
+
   const parseCSV = (text) => {
     const lines = text.trim().split('\n');
     if (lines.length < 2) return [];
@@ -408,19 +424,32 @@ function ClientsTab() {
             {selectedClient.dogs.map(d => (
               <div
                 key={d.id}
-                onClick={() => selectDog(d.id)}
                 style={{
                   padding: '10px 14px', cursor: 'pointer', fontSize: 13,
                   borderBottom: '1px solid var(--border)',
                   background: selectedDogId === d.id ? 'oklch(94% 0.05 185)' : 'transparent',
                   color: selectedDogId === d.id ? 'var(--teal)' : 'var(--text)',
-                  display: 'flex', alignItems: 'center', gap: 8,
+                  display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'space-between',
                 }}
               >
-                {d.photoUrl
-                  ? <img src={d.photoUrl} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} alt={d.name} />
-                  : <span>🐕</span>}
-                {d.name || '(ไม่มีชื่อ)'}
+                <div onClick={() => selectDog(d.id)} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  {d.photoUrl
+                    ? <img src={d.photoUrl} style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover' }} alt={d.name} />
+                    : <span>🐕</span>}
+                  {d.name || '(ไม่มีชื่อ)'}
+                </div>
+                {deleteMode && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); deleteDog(d.id); }}
+                    style={{
+                      background: 'none', border: '1px solid var(--red)', color: 'var(--red)',
+                      borderRadius: 4, padding: '3px 6px', cursor: 'pointer', fontSize: 10,
+                      fontWeight: 600, flexShrink: 0
+                    }}
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
             ))}
           </div>
