@@ -373,3 +373,14 @@
   .wb-form-grid { gap: 8px; }
   .wb-footer-spacer { display: block; height: 80px; }
 }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 600;
+  z-index: 9999; animation: toast-in 0.2s ease-out;
+  box-shadow: 0 4px 16px oklch(0% 0 0 / 0.12);
+}
+.toast-success { background: oklch(94% 0.06 145); color: var(--green); border: 1px solid oklch(80% 0.12 145); }
+.toast-error { background: oklch(94% 0.06 25); color: var(--red); border: 1px solid oklch(80% 0.14 25); }
+@keyframes toast-in { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }

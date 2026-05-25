@@ -47,6 +47,7 @@ export default function WebApp() {
   const [ownerLineId, setOwnerLineId] = useState('');
   const [allDogsWithRecipes, setAllDogsWithRecipes] = useState([]);
   const [adminSelectedDogId, setAdminSelectedDogId] = useState(null);
+  const [toast, setToast] = useState(null);
 
   const dog = isAdmin && adminSelectedDogId
     ? allDogsWithRecipes.find(d => d.id === adminSelectedDogId)
@@ -120,42 +121,54 @@ export default function WebApp() {
     if (!loading && !dog.name) setPage('profile');
   }, [loading, dog.name]);
 
-  const saveDogs = useCallback(async (updatedDogs) => {
-    if (!userId) return;
-    await supabase.from('user_data')
-      .update({ dogs: updatedDogs, updated_at: new Date().toISOString() })
-      .eq('user_id', userId);
-  }, [userId]);
-
-  const updateDog = useCallback((fields) => {
-    setDogs(prev => {
-      const updated = prev.map(d =>
-        d.id === (fields.id ?? activeDogId) ? { ...d, ...fields } : d
-      );
-      saveDogs(updated);
-      return updated;
-    });
-  }, [activeDogId, saveDogs]);
-
-  const addDog = () => {
-    const entry = newDogEntry();
-    setDogs(prev => {
-      const updated = [...prev, entry];
-      saveDogs(updated);
-      return updated;
-    });
-    setActiveDogId(entry.id);
-    setPage('profile');
+  const showToast = (msg, type = 'success') => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 2500);
   };
 
-  const deleteDog = (id) => {
-    setDogs(prev => {
-      if (prev.length <= 1) return prev;
-      const updated = prev.filter(d => d.id !== id);
-      saveDogs(updated);
-      if (activeDogId === id) setActiveDogId(updated[0].id);
-      return updated;
-    });
+  const saveDogs = useCallback(async (updatedDogs) => {
+    if (!userId) return { error: 'no user' };
+    const { error } = await supabase.from('user_data')
+      .update({ dogs: updatedDogs, updated_at: new Date().toISOString() })
+      .eq('user_id', userId);
+    if (error) {
+      console.error('saveDogs error:', error);
+      return { error };
+    }
+    return { error: null };
+  }, [userId]);
+
+  const updateDog = useCallback(async (fields) => {
+    const updated = dogs.map(d =>
+      d.id === (fields.id ?? activeDogId) ? { ...d, ...fields } : d
+    );
+    setDogs(updated);
+    const { error } = await saveDogs(updated);
+    if (error) {
+      showToast('บันทึกไม่สำเร็จ กรุณาลองใหม่', 'error');
+    } else {
+      showToast('บันทึกแล้ว');
+    }
+    return { error };
+  }, [activeDogId, saveDogs, dogs]);
+
+  const addDog = async () => {
+    const entry = newDogEntry();
+    const updated = [...dogs, entry];
+    setDogs(updated);
+    setActiveDogId(entry.id);
+    setPage('profile');
+    const { error } = await saveDogs(updated);
+    if (error) showToast('เพิ่มน้องหมาไม่สำเร็จ', 'error');
+  };
+
+  const deleteDog = async (id) => {
+    if (dogs.length <= 1) return;
+    const updated = dogs.filter(d => d.id !== id);
+    setDogs(updated);
+    if (activeDogId === id) setActiveDogId(updated[0].id);
+    const { error } = await saveDogs(updated);
+    if (error) showToast('ลบไม่สำเร็จ', 'error');
   };
 
   const uploadPhoto = async (dogId, file) => {
@@ -174,7 +187,8 @@ export default function WebApp() {
     const update = {};
     if (phone !== undefined) update.owner_phone = phone;
     if (lineId !== undefined) update.owner_line_id = lineId;
-    await supabase.from('user_data').update(update).eq('user_id', userId);
+    const { error } = await supabase.from('user_data').update(update).eq('user_id', userId);
+    if (error) console.error('updateOwner error:', error);
   }, [userId]);
 
   const logout = async () => { await clearSession(); navigate('/login', { replace: true }); };
@@ -314,6 +328,12 @@ export default function WebApp() {
           </div>
         ))}
       </div>
+
+      {toast && (
+        <div className={`toast ${toast.type === 'error' ? 'toast-error' : 'toast-success'}`}>
+          {toast.type === 'error' ? '⚠️' : '✓'} {toast.msg}
+        </div>
+      )}
     </div>
   );
 }
