@@ -6,7 +6,6 @@ const MONTHS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.'
 export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActiveDogId, addDog, deleteDog, uploadPhoto, isNew, ownerPhone, ownerLineId, updateOwner }) {
   const [form, setForm] = useState(dog);
   const [ownerForm, setOwnerForm] = useState({ phone: ownerPhone || '', lineId: ownerLineId || '' });
-  const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState('');
   const fileRef = useRef();
@@ -18,12 +17,10 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
 
   const save = async () => {
     try {
-      updateDog({ ...form });
+      await updateDog({ ...form });
       if (updateOwner) {
         await updateOwner({ phone: ownerForm.phone, lineId: ownerForm.lineId });
       }
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
     } catch (err) {
       console.error('Save error:', err);
     }
@@ -246,7 +243,6 @@ export default function PageProfile({ dog, updateDog, dogs, activeDogId, setActi
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
           <button className="wb-btn" onClick={() => save()}>บันทึกข้อมูล</button>
           <button className="wb-btn-outline" onClick={() => setForm(dog)}>ยกเลิก</button>
-          {saved && <span style={{ fontSize: 13, color: 'var(--green)', fontWeight: 600 }}>✓ บันทึกแล้ว</span>}
           {dogs.length > 1 && (
             <button onClick={confirmDelete} style={{ marginLeft: 'auto', background: 'none', border: '1px solid var(--red)', color: 'var(--red)', borderRadius: 8, padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}>
               🗑 ลบน้องหมานี้
