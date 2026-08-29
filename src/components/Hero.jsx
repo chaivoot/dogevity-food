@@ -23,7 +23,7 @@ export default function Hero() {
           แต่คือโภชนาการที่แท้จริง สำหรับน้องหมาแต่ละตัวของคุณ
         </p>
         <div className="hero-ctas fi d3">
-          <a className="btn-primary" href="/app">
+          <a className="btn-primary" href="https://app.dogsanook.com/" target="_blank" rel="noopener noreferrer">
             คำนวณแคลน้องหมา →
           </a>
           <a className="btn-ghost" href="#" onClick={e => { e.preventDefault(); scrollTo('solution'); }}>

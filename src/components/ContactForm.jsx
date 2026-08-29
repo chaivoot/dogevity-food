@@ -60,7 +60,7 @@ export default function ContactForm() {
           <span style={{ fontSize: 14, color: '#06C755', fontWeight: 700 }}>Line ID: @dogevity</span>
         </div>
       )}
-      <a className="webapp-link" href="/app">ทดลองคำนวณ RER / DER ของน้องหมา</a>
+      <a className="webapp-link" href="https://app.dogsanook.com/" target="_blank" rel="noopener noreferrer">ทดลองคำนวณ RER / DER ของน้องหมา</a>
     </div>
   );
 

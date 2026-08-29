@@ -48,7 +48,7 @@ export default function Nav() {
         </ul>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <a className="nav-cta" href="/app">
+          <a className="nav-cta" href="https://app.dogsanook.com/" target="_blank" rel="noopener noreferrer">
             คำนวณแคลน้องหมา
           </a>
           {/* Hamburger button — mobile only */}
@@ -71,7 +71,7 @@ export default function Nav() {
             {l.label}
           </a>
         ))}
-        <a className="nav-mobile-cta" href="/app" onClick={close}>
+        <a className="nav-mobile-cta" href="https://app.dogsanook.com/" target="_blank" rel="noopener noreferrer" onClick={close}>
           คำนวณแคลน้องหมา →
         </a>
       </div>

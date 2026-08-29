@@ -127,7 +127,7 @@ export default function CalorieCalculator() {
         </div>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <a className="btn-primary" href="/app">
+          <a className="btn-primary" href="https://app.dogsanook.com/" target="_blank" rel="noopener noreferrer">
             สร้างโปรไฟล์น้อง และตั้งโปรแกรมสูตรอาหารเฉพาะตัว
           </a>
         </div>
